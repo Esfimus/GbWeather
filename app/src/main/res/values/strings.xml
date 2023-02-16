@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">GbWeather</string>
+    <string name="app_name">Weather</string>
+    <string name="location">Location</string>
+    <string name="message">Message</string>
+    <string name="send">Send</string>
 </resources>
