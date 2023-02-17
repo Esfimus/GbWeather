@@ -5,12 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.databinding.FragmentMainBinding
-import java.time.LocalDateTime
+import com.esfimus.gbweather.domain.SharedViewModel
 
 class MainFragment : Fragment() {
 
     private var binding: FragmentMainBinding? = null
+    private lateinit var model: SharedViewModel
 
     companion object {
         @JvmStatic
@@ -25,26 +27,26 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initAction()
     }
 
     private fun initAction() {
-        binding?.buttonCheck?.setOnClickListener {
-            binding?.textFieldLocation?.text = currentDateAndTime().first
-            binding?.textFieldMessage?.text = currentDateAndTime().second
+        model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        model.weather.observe(viewLifecycleOwner) {
+            val weatherLocation = it.location.name
+            val weatherTemperature = "${it.temperature}°"
+            val weatherHumidity = "${it.humidity}%"
+            binding?.textFieldLocation?.text = weatherLocation
+            binding?.textFieldTemperature?.text = weatherTemperature
+            binding?.textFieldHumidity?.text = weatherHumidity
         }
-    }
 
-    private fun currentDateAndTime(): Pair<String, String> {
-        val currentDate = LocalDateTime.now()
-        val year = "%04d".format(currentDate.year)
-        val month = "%02d".format(currentDate.monthValue)
-        val day = "%02d".format(currentDate.dayOfMonth)
-        val hour = "%02d".format(currentDate.hour)
-        val minute = "%02d".format(currentDate.minute)
-        val second = "%02d".format(currentDate.second)
-        return Pair("$year/$month/$day", "$hour:$minute:$second")
+        binding?.buttonCheck?.setOnClickListener {
+            val inputLocation = binding?.edittextInputLocation?.text.toString()
+            if (inputLocation.isNotEmpty()) {
+                model.sendRequest(inputLocation)
+            }
+        }
     }
 
     override fun onDestroy() {
