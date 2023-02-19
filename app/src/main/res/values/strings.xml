@@ -9,5 +9,6 @@
     <string name="wind">Wind</string>
     <string name="pressure">Pressure</string>
     <string name="update_weather">Update weather</string>
-    <string name="time">time</string>
+    <string name="time">Last updated</string>
+    <string name="add_weather_location">Add weather location</string>
 </resources>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.WeatherDetailsFragment">
@@ -80,9 +79,9 @@
         android:layout_margin="@dimen/small_margin"
         android:hint="@string/time"
         android:textSize="@dimen/small_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/update_weather"
         app:layout_constraintEnd_toStartOf="@id/update_weather"
-        app:layout_constraintTop_toTopOf="@id/update_weather"
-        app:layout_constraintBottom_toBottomOf="@id/update_weather"/>
+        app:layout_constraintTop_toTopOf="@id/update_weather" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/update_weather"
@@ -92,8 +91,8 @@
         android:contentDescription="@string/update_weather"
         android:src="@drawable/baseline_refresh_24"
         app:fabSize="auto"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/location_list"
@@ -103,7 +102,7 @@
         android:contentDescription="@string/update_weather"
         android:src="@drawable/baseline_view_list_24"
         app:fabSize="auto"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
