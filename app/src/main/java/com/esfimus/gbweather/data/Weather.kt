@@ -1,6 +1,10 @@
 package com.esfimus.gbweather.data
 
 data class Weather(val location: Location) {
-    var temperature: Int = 0
-    var humidity: Int = 50
+    var temperature: String? = null
+    var feelsLike: String? = null
+    var humidity: String? = null
+    var wind: String? = null
+    var pressure: String? = null
+    var currentTime: String? = null
 }
