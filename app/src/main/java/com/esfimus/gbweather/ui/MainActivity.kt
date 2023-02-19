@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private fun runFragment() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.main_container, MainFragment.newInstance())
+            .replace(R.id.main_container, WeatherDetailsFragment.newInstance())
             .commit()
     }
 }

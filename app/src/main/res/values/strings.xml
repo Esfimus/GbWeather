@@ -5,4 +5,9 @@
     <string name="humidity">Humidity</string>
     <string name="check">Check</string>
     <string name="enter_location">Enter location</string>
+    <string name="feels_like">Feels like</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="update_weather">Update weather</string>
+    <string name="time">time</string>
 </resources>

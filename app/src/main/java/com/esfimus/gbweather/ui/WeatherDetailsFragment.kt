@@ -6,22 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import com.esfimus.gbweather.databinding.FragmentMainBinding
+import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.SharedViewModel
 
-class MainFragment : Fragment() {
+class WeatherDetailsFragment : Fragment() {
 
-    private var binding: FragmentMainBinding? = null
+    private var binding: FragmentWeatherDetailsBinding? = null
     private lateinit var model: SharedViewModel
 
     companion object {
-        @JvmStatic
-        fun newInstance() = MainFragment()
+        fun newInstance() = WeatherDetailsFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View? {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+                              savedInstanceState: Bundle?): View? {
+        binding = FragmentWeatherDetailsBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
@@ -41,12 +40,6 @@ class MainFragment : Fragment() {
             binding?.textFieldHumidity?.text = weatherHumidity
         }
 
-        binding?.buttonCheck?.setOnClickListener {
-            val inputLocation = binding?.edittextInputLocation?.text.toString()
-            if (inputLocation.isNotEmpty()) {
-                model.sendRequest(inputLocation)
-            }
-        }
     }
 
     override fun onDestroy() {
