@@ -27,4 +27,19 @@ class Repository(private val location: Location) {
         val second = "%02d".format(currentDate.second)
         return "$year/$month/$day $hour:$minute:$second"
     }
+
+    val availableLocations = listOf(
+        Location("Moscow"),
+        Location("Beijing"),
+        Location("Tokio"),
+        Location("Nairobi"),
+        Location("New Delhi"),
+        Location("Prague"),
+        Location("Tehran"),
+        Location("Athens"),
+        Location("Washington"),
+        Location("Mexico"),
+        Location("Stockholm"),
+        Location("Santiago"),
+    )
 }
