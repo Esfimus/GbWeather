@@ -3,9 +3,9 @@ package com.esfimus.gbweather.data
 import java.time.LocalDateTime
 import kotlin.random.Random
 
-class Repository(private val location: Location) {
-    fun updateWeather(): Weather {
-        val weather = Weather(location)
+class Repository {
+
+    fun updateWeather(weather: Weather): Weather {
         weather.currentTime = currentDateAndTime()
         weather.temperature = "${Random.nextInt(-30, 31)}°"
         weather.feelsLike = "${Random.nextInt(
@@ -28,18 +28,22 @@ class Repository(private val location: Location) {
         return "$year/$month/$day $hour:$minute:$second"
     }
 
-    val availableLocations = listOf(
-        Location("Moscow"),
-        Location("Beijing"),
-        Location("Tokio"),
-        Location("Nairobi"),
-        Location("New Delhi"),
-        Location("Prague"),
-        Location("Tehran"),
-        Location("Athens"),
-        Location("Washington"),
-        Location("Mexico"),
-        Location("Stockholm"),
-        Location("Santiago"),
+    private val availableLocations = listOf(
+        Weather.Location("moscow"),
+        Weather.Location("beijing"),
+        Weather.Location("tokio"),
+        Weather.Location("nairobi"),
+        Weather.Location("new delhi"),
+        Weather.Location("prague"),
+        Weather.Location("tehran"),
+        Weather.Location("athens"),
+        Weather.Location("washington"),
+        Weather.Location("mexico"),
+        Weather.Location("stockholm"),
+        Weather.Location("santiago"),
     )
+
+    fun isAvailable(locationName: String): Boolean {
+        return availableLocations.contains(Weather.Location(locationName.lowercase()))
+    }
 }

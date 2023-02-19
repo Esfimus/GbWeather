@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.SharedViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class WeatherDetailsFragment : Fragment() {
 
@@ -31,15 +32,29 @@ class WeatherDetailsFragment : Fragment() {
 
     private fun initAction() {
         model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
-        model.weather.observe(viewLifecycleOwner) {
-            val weatherLocation = it.location.name
-            val weatherTemperature = "${it.temperature}°"
-            val weatherHumidity = "${it.humidity}%"
-            binding?.textFieldLocation?.text = weatherLocation
-            binding?.textFieldTemperature?.text = weatherTemperature
-            binding?.textFieldHumidity?.text = weatherHumidity
+        model.selectedWeather.observe(viewLifecycleOwner) {
+            binding?.textFieldLocation?.text = it.location.name
+            binding?.textFieldTemperature?.text = it.temperature
+            binding?.textFieldFeelsLike?.text = it.feelsLike
+            binding?.textFieldHumidity?.text = it.humidity
+            binding?.textFieldWind?.text = it.wind
+            binding?.textFieldPressure?.text = it.pressure
         }
+        binding?.updateWeather?.setOnClickListener {
+            refreshWeather()
+        }
+    }
 
+    private fun refreshWeather() {
+        if (model.favoritesAdded()) {
+            model.updateWeatherList()
+        } else {
+            snackMessage("Please, select location")
+        }
+    }
+
+    private fun snackMessage(text: String) {
+        binding?.updateWeather?.let { Snackbar.make(it, text, Snackbar.LENGTH_SHORT).show() }
     }
 
     override fun onDestroy() {
