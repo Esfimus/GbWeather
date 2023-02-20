@@ -90,6 +90,20 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    fun deleteWeatherLocation(position: Int) {
+        if (position in 0 until locationsList.favoriteWeatherList.size) {
+            locationsList.deleteWeather(position)
+            weatherList.value = locationsList.favoriteWeatherList
+            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
+            if (selectedWeatherIndex!! >= 0) {
+                selectedWeather.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
+            } else {
+                selectedWeather.value = Weather(Weather.Location(""))
+            }
+            save()
+        }
+    }
+
     /**
      * Checks if requested location name is valid and not in favorite list
      */

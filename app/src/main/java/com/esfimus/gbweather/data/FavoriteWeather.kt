@@ -8,10 +8,6 @@ class FavoriteWeather {
         favoriteWeatherList.add(weather)
     }
 
-    fun addWeatherList(weatherList: List<Weather>) {
-        favoriteWeatherList.addAll(weatherList)
-    }
-
     fun deleteWeather(index: Int) {
         if (index in 0 until favoriteWeatherList.size) favoriteWeatherList.removeAt(index)
     }

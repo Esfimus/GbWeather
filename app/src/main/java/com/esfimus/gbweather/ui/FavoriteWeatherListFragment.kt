@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,18 +15,16 @@ import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.domain.RecyclerAdapter
 import com.esfimus.gbweather.domain.SharedViewModel
 import com.esfimus.gbweather.domain.clicks.OnListItemCLick
+import com.esfimus.gbweather.domain.clicks.OnListItemLongClick
 
 class FavoriteWeatherListFragment : Fragment() {
 
     private var bindingNullable: FragmentFavoriteWeatherListBinding? = null
     private val binding get() = bindingNullable!!
+    private lateinit var model: SharedViewModel
 
     companion object {
         fun newInstance() = FavoriteWeatherListFragment()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +39,7 @@ class FavoriteWeatherListFragment : Fragment() {
     }
 
     private fun initDynamicList() {
-        val model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         context?.let { model.load(it) }
         model.weatherList.observe(viewLifecycleOwner) {
             val recyclerView: RecyclerView = binding.weatherRecycler
@@ -54,9 +53,30 @@ class FavoriteWeatherListFragment : Fragment() {
                     requireActivity().supportFragmentManager.popBackStack()
                 }
             })
+            // reaction on item long click
+            customAdapter.setListItemLongClickListener(object : OnListItemLongClick{
+                override fun onLongCLick(position: Int, itemView: View) {
+                    popupMenu(position, itemView)
+                }
+            })
         }
         binding.addWeatherLocation.setOnClickListener {
             openFragment(AddWeatherLocationFragment.newInstance())
+        }
+    }
+
+    private fun popupMenu(position: Int, itemView: View) {
+        val popupMenu = PopupMenu(context, itemView)
+        popupMenu.inflate(R.menu.popup_menu)
+        popupMenu.show()
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.delete_popup -> {
+                    model.deleteWeatherLocation(position)
+                    true
+                }
+                else -> false
+            }
         }
     }
 
