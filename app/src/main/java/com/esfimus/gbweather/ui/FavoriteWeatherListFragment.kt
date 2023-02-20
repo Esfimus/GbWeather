@@ -37,10 +37,11 @@ class FavoriteWeatherListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initDynamicList()
     }
-    // TODO check
+
     private fun initDynamicList() {
         val model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
-        model.selectedWeatherList.observe(viewLifecycleOwner) {
+        context?.let { model.load(it) }
+        model.weatherList.observe(viewLifecycleOwner) {
             val recyclerView: RecyclerView = binding.weatherRecycler
             val customAdapter = RecyclerAdapter(it)
             recyclerView.layoutManager = LinearLayoutManager(context)

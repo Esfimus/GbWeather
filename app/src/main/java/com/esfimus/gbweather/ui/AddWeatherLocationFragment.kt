@@ -36,6 +36,7 @@ class AddWeatherLocationFragment : Fragment() {
         val model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         binding.searchLocationButton.setOnClickListener {
             if (model.addWeatherLocation(searchView.text.toString()) == 1) {
+                model.save()
                 requireActivity().supportFragmentManager.popBackStack()
             } else if (model.addWeatherLocation(searchView.text.toString()) == 0){
                 snackMessage("Location is already favorite")
