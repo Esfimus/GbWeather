@@ -72,8 +72,8 @@ class SharedViewModel : ViewModel() {
     fun addWeatherLocation(requestLocation: String): Int {
         // location is valid and not in favorites list yet, permission to add location
         return if (checkLocation(requestLocation)) {
-            var newWeather = Weather(Weather.Location(requestLocation.uppercase()))
-            newWeather = repositoryData.updateWeather(newWeather)
+            val newWeather = Weather(Weather.Location(requestLocation.uppercase()))
+            repositoryData.updateWeather(newWeather)
             locationsList.addWeather(newWeather)
             weatherList.value = locationsList.favoriteWeatherList
             selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
@@ -114,6 +114,8 @@ class SharedViewModel : ViewModel() {
         for (weather in locationsList.favoriteWeatherList) {
             repositoryData.updateWeather(weather)
         }
+        weatherList.value = locationsList.favoriteWeatherList
+        save()
     }
 
     /**
