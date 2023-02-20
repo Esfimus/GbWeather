@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +13,6 @@ import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.domain.RecyclerAdapter
 import com.esfimus.gbweather.domain.SharedViewModel
-import com.google.android.material.snackbar.Snackbar
 
 class FavoriteWeatherListFragment : Fragment() {
 
@@ -41,15 +39,10 @@ class FavoriteWeatherListFragment : Fragment() {
     }
     // TODO check
     private fun initDynamicList() {
-        var weatherList: List<List<String?>>? = null
         val model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         model.selectedWeatherList.observe(viewLifecycleOwner) {
-            snackMessage("${it[0][0]} ${it[0][1]}")
-            weatherList = it
-        }
-        if (weatherList != null) {
             val recyclerView: RecyclerView = binding.weatherRecycler
-            val customAdapter = RecyclerAdapter(weatherList!!)
+            val customAdapter = RecyclerAdapter(it)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = customAdapter
         }
@@ -66,10 +59,6 @@ class FavoriteWeatherListFragment : Fragment() {
             .addToBackStack(null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit()
-    }
-
-    private fun snackMessage(text: String) {
-        binding.addWeatherLocation.let { Snackbar.make(it, text, Snackbar.LENGTH_SHORT).show() }
     }
 
     override fun onDestroy() {

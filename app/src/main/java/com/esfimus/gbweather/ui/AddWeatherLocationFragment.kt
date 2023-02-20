@@ -20,10 +20,6 @@ class AddWeatherLocationFragment : Fragment() {
         fun newInstance() = AddWeatherLocationFragment()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
         bindingNullable = FragmentAddWeatherLocationBinding.inflate(inflater, container, false)
@@ -39,8 +35,10 @@ class AddWeatherLocationFragment : Fragment() {
         val searchView: TextView = binding.searchLocationText
         val model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         binding.searchLocationButton.setOnClickListener {
-            if (model.addWeatherLocation(searchView.text.toString())) {
+            if (model.addWeatherLocation(searchView.text.toString()) == 1) {
                 requireActivity().supportFragmentManager.popBackStack()
+            } else if (model.addWeatherLocation(searchView.text.toString()) == 0){
+                snackMessage("Location is already favorite")
             } else {
                 snackMessage("Location is not found")
             }

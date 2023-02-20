@@ -10,24 +10,37 @@ class SharedViewModel : ViewModel() {
 
     // available for view
     val selectedWeather: MutableLiveData<Weather> = MutableLiveData()
-    val selectedWeatherList: MutableLiveData<List<List<String?>>> = MutableLiveData()
+    val selectedWeatherList: MutableLiveData<List<Weather>> = MutableLiveData()
 
     // connection to data
     private val repositoryData = Repository()
     private val locationsList = FavoriteWeather()
-    private val locationNameList = mutableListOf<List<String?>>()
 
-    fun addWeatherLocation(requestLocation: String): Boolean {
-        return if (repositoryData.isAvailable(requestLocation)) {
+    fun addWeatherLocation(requestLocation: String): Int {
+        return if (checkLocation(requestLocation)) {
             var newWeather = Weather(Weather.Location(requestLocation.uppercase()))
             newWeather = repositoryData.updateWeather(newWeather)
             locationsList.addWeather(newWeather)
-            locationNameList.add(listOf(newWeather.location.name, newWeather.temperature))
-            selectedWeatherList.value = locationNameList
-            true
+            selectedWeatherList.value = locationsList.favoriteWeatherList
+            1
+        } else if (locationIsFavorite(requestLocation)) {
+            0
         } else {
-            false
+            -1
         }
+    }
+
+    private fun checkLocation(requestLocation: String): Boolean {
+        return (repositoryData.isAvailable(requestLocation) && !locationIsFavorite(requestLocation))
+    }
+
+    private fun locationIsFavorite(requestLocation: String): Boolean {
+        for (favorites in locationsList.favoriteWeatherList) {
+            if (favorites.location.name.lowercase() == requestLocation) {
+                return true
+            }
+        }
+        return false
     }
 
     fun updateWeatherList() {
