@@ -13,6 +13,7 @@ import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.domain.RecyclerAdapter
 import com.esfimus.gbweather.domain.SharedViewModel
+import com.esfimus.gbweather.domain.clicks.OnListItemCLick
 
 class FavoriteWeatherListFragment : Fragment() {
 
@@ -46,6 +47,13 @@ class FavoriteWeatherListFragment : Fragment() {
             val customAdapter = RecyclerAdapter(it)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = customAdapter
+            // reaction on item click
+            customAdapter.setListItemClickListener(object : OnListItemCLick {
+                override fun onClick(position: Int) {
+                    model.switchWeatherLocation(position)
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+            })
         }
         binding.addWeatherLocation.setOnClickListener {
             openFragment(AddWeatherLocationFragment.newInstance())

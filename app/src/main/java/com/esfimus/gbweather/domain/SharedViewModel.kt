@@ -61,8 +61,10 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun switchWeatherLocation() {
-
+    fun switchWeatherLocation(position: Int) {
+        selectedWeatherIndex = position
+        selectedWeather.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
+        save()
     }
 
     /**
