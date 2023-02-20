@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.RecyclerviewItemBinding
-
+// TODO check
 class RecyclerAdapter(private val itemsList: List<List<String?>>) :
     RecyclerView.Adapter<RecyclerAdapter.CustomViewHolder>() {
 
