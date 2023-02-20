@@ -35,6 +35,7 @@ class WeatherDetailsFragment : Fragment() {
 
     private fun initAction() {
         model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        context?.let { model.load(it) }
         model.selectedWeather.observe(viewLifecycleOwner) {
             binding.textFieldLocation.text = it.location.name
             binding.textFieldTemperature.text = it.temperature
@@ -42,6 +43,7 @@ class WeatherDetailsFragment : Fragment() {
             binding.textFieldHumidity.text = it.humidity
             binding.textFieldWind.text = it.wind
             binding.textFieldPressure.text = it.pressure
+            binding.currentTime.text = it.currentTime
         }
         binding.updateWeather.setOnClickListener {
             refreshWeather()

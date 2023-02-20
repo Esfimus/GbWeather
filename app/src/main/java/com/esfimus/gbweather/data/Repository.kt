@@ -9,10 +9,10 @@ class Repository {
         weather.currentTime = currentDateAndTime()
         val temperatureInt = Random.nextInt(-30, 31)
         weather.temperature = "$temperatureInt°"
-        weather.feelsLike = "${Random.nextInt(temperatureInt - 5,temperatureInt + 5)}°"
-        weather.humidity = Random.nextInt(20, 100).toString()
-        weather.wind = "${listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")[Random.nextInt(0, 8)]} ${Random.nextInt(0, 21)} m/s"
-        weather.pressure = "${Random.nextInt(735, 745)} mmHg"
+        weather.feelsLike = "Feels like ${Random.nextInt(temperatureInt - 5,temperatureInt + 5)}°"
+        weather.humidity = "Humidity ${Random.nextInt(20, 100)}%"
+        weather.wind = "Wind ${Random.nextInt(0, 21)} m/s  ${listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")[Random.nextInt(0, 8)]}"
+        weather.pressure = "Pressure ${Random.nextInt(735, 745)} mmHg"
         return weather
     }
 
