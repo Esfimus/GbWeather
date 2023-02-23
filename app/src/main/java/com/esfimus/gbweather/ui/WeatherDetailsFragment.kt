@@ -64,7 +64,7 @@ class WeatherDetailsFragment : Fragment() {
         if (model.favoritesAdded()) {
             model.updateWeatherList()
         } else {
-            snackMessage("Please, select location")
+            view?.snackMessage("Please, select location")
         }
     }
 
@@ -78,8 +78,8 @@ class WeatherDetailsFragment : Fragment() {
             .commit()
     }
 
-    private fun snackMessage(text: String) {
-        binding.updateWeather.let { Snackbar.make(it, text, Snackbar.LENGTH_SHORT).show() }
+    private fun View.snackMessage(text: String, length: Int = Snackbar.LENGTH_SHORT) {
+        Snackbar.make(this, text, length).show()
     }
 
     override fun onDestroy() {

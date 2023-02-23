@@ -26,7 +26,7 @@
         android:layout_margin="@dimen/large_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_location_text"
         android:contentDescription="@string/search_location"
         android:src="@drawable/baseline_search_24"
         app:fabSize="auto"/>
