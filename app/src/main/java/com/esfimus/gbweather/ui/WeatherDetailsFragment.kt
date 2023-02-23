@@ -48,13 +48,15 @@ class WeatherDetailsFragment : Fragment() {
 
     private fun listenWeatherList() {
         model.selectedWeather.observe(viewLifecycleOwner) {
-            binding.textFieldLocation.text = it.location.name
-            binding.textFieldTemperature.text = it.temperature
-            binding.textFieldFeelsLike.text = it.feelsLike
-            binding.textFieldHumidity.text = it.humidity
-            binding.textFieldWind.text = it.wind
-            binding.textFieldPressure.text = it.pressure
-            binding.currentTime.text = it.currentTime
+            with (binding) {
+                textFieldLocation.text = it.location.name
+                textFieldTemperature.text = it.temperature
+                textFieldFeelsLike.text = it.feelsLike
+                textFieldHumidity.text = it.humidity
+                textFieldWind.text = it.wind
+                textFieldPressure.text = it.pressure
+                currentTime.text = it.currentTime
+            }
         }
     }
 

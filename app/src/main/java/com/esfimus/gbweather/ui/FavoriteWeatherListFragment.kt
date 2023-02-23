@@ -9,7 +9,6 @@ import android.widget.PopupMenu
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.domain.RecyclerAdapter
@@ -42,10 +41,11 @@ class FavoriteWeatherListFragment : Fragment() {
         model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         context?.let { model.load(it) }
         model.weatherList.observe(viewLifecycleOwner) {
-            val recyclerView: RecyclerView = binding.weatherRecycler
             val customAdapter = RecyclerAdapter(it)
-            recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = customAdapter
+            binding.weatherRecycler.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = customAdapter
+            }
             // reaction on item click
             customAdapter.setListItemClickListener(object : OnListItemCLick {
                 override fun onClick(position: Int) {
@@ -66,16 +66,17 @@ class FavoriteWeatherListFragment : Fragment() {
     }
 
     private fun popupMenu(position: Int, itemView: View) {
-        val popupMenu = PopupMenu(context, itemView)
-        popupMenu.inflate(R.menu.popup_menu)
-        popupMenu.show()
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.delete_popup -> {
-                    model.deleteWeatherLocation(position)
-                    true
+        PopupMenu(context, itemView).apply {
+            inflate(R.menu.popup_menu)
+            show()
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.delete_popup -> {
+                        model.deleteWeatherLocation(position)
+                        true
+                    }
+                    else -> false
                 }
-                else -> false
             }
         }
     }

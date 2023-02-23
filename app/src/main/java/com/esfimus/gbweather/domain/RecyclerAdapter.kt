@@ -20,8 +20,10 @@ class RecyclerAdapter(private val itemsList: List<Weather>) :
     inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = RecyclerviewItemBinding.bind(itemView)
         fun bind(favouriteLocation: Weather) {
-            binding.cardLocationName.text = favouriteLocation.location.name
-            binding.cardTemperature.text = favouriteLocation.temperature.toString()
+            with (binding) {
+                cardLocationName.text = favouriteLocation.location.name
+                cardTemperature.text = favouriteLocation.temperature.toString()
+            }
         }
 
         init {

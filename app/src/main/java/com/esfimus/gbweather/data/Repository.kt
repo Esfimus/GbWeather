@@ -6,14 +6,15 @@ import kotlin.random.Random
 class Repository {
 
     fun updateWeather(weather: Weather): Weather {
-        weather.currentTime = currentDateAndTime()
         val temperatureInt = Random.nextInt(-30, 31)
-        weather.temperature = "$temperatureInt°"
-        weather.feelsLike = "Feels like ${Random.nextInt(temperatureInt - 5,temperatureInt + 5)}°"
-        weather.humidity = "Humidity ${Random.nextInt(20, 100)}%"
-        weather.wind = "Wind ${Random.nextInt(0, 21)} m/s  ${listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")[Random.nextInt(0, 8)]}"
-        weather.pressure = "Pressure ${Random.nextInt(735, 745)} mmHg"
-        return weather
+        return weather.apply {
+            currentTime = currentDateAndTime()
+            temperature = "$temperatureInt°"
+            feelsLike = "Feels like ${Random.nextInt(temperatureInt - 5,temperatureInt + 5)}°"
+            humidity = "Humidity ${Random.nextInt(20, 100)}%"
+            wind = "Wind ${Random.nextInt(0, 21)} m/s  ${listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")[Random.nextInt(0, 8)]}"
+            pressure = "Pressure ${Random.nextInt(735, 745)} mmHg"
+        }
     }
 
     private fun currentDateAndTime(): String {
