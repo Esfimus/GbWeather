@@ -20,7 +20,8 @@ class FavoriteWeatherListFragment : Fragment() {
 
     private var bindingNullable: FragmentFavoriteWeatherListBinding? = null
     private val binding get() = bindingNullable!!
-    private lateinit var model: SharedViewModel
+    private val model: SharedViewModel by lazy {
+        ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
 
     companion object {
         fun newInstance() = FavoriteWeatherListFragment()
@@ -38,7 +39,6 @@ class FavoriteWeatherListFragment : Fragment() {
     }
 
     private fun initDynamicList() {
-        model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         context?.let { model.load(it) }
         model.weatherList.observe(viewLifecycleOwner) {
             val customAdapter = RecyclerAdapter(it)

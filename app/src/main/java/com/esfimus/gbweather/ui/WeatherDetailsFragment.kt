@@ -16,7 +16,8 @@ class WeatherDetailsFragment : Fragment() {
 
     private var bindingNullable: FragmentWeatherDetailsBinding? = null
     private val binding get() = bindingNullable!!
-    private lateinit var model: SharedViewModel
+    private val model: SharedViewModel by lazy {
+        ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
 
     companion object {
         fun newInstance() = WeatherDetailsFragment()
@@ -34,7 +35,6 @@ class WeatherDetailsFragment : Fragment() {
     }
 
     private fun initAction() {
-        model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         context?.let { model.load(it) }
         listenWeatherList()
         binding.updateWeather.setOnClickListener {

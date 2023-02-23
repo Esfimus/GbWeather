@@ -35,7 +35,7 @@ class AddWeatherLocationFragment : Fragment() {
 
     private fun initAction() {
         val searchView: TextView = binding.searchLocationText
-        val model = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        val model: SharedViewModel by lazy { ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
         binding.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
             if (model.addWeatherLocation(searchView.text.toString()) == 1) {
