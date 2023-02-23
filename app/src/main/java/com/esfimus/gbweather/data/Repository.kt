@@ -1,6 +1,7 @@
 package com.esfimus.gbweather.data
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 class Repository {
@@ -18,14 +19,7 @@ class Repository {
     }
 
     private fun currentDateAndTime(): String {
-        val currentDate = LocalDateTime.now()
-        val year = "%04d".format(currentDate.year)
-        val month = "%02d".format(currentDate.monthValue)
-        val day = "%02d".format(currentDate.dayOfMonth)
-        val hour = "%02d".format(currentDate.hour)
-        val minute = "%02d".format(currentDate.minute)
-        val second = "%02d".format(currentDate.second)
-        return "$year/$month/$day $hour:$minute:$second"
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
     }
 
     private val availableLocations = listOf(
