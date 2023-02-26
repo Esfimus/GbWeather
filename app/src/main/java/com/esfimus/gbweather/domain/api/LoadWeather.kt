@@ -3,14 +3,13 @@ package com.esfimus.gbweather.domain.api
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.esfimus.gbweather.BuildConfig
 import com.esfimus.gbweather.domain.Location
 import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
-
-private const val YANDEX_API_KEY = ""
 
 class LoadWeather(private val location: Location, private val loadable: Loadable) {
 
@@ -24,7 +23,7 @@ class LoadWeather(private val location: Location, private val loadable: Loadable
                     urlConnection = uri.openConnection() as HttpsURLConnection
                     with(urlConnection) {
                         requestMethod = "GET"
-                        addRequestProperty("X-Yandex-API-Key", YANDEX_API_KEY)
+                        addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
                         readTimeout = 5000
                     }
                     val buffer = BufferedReader(InputStreamReader(urlConnection.inputStream))
