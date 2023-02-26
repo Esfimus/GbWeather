@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.data
+package com.esfimus.gbweather.domain
 
 data class Location(
     val name: String,

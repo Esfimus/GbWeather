@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,7 +9,8 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
-import com.esfimus.gbweather.domain.SharedViewModel
+import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
 
 class WeatherDetailsFragment : Fragment() {
@@ -38,7 +39,8 @@ class WeatherDetailsFragment : Fragment() {
         context?.let { model.load(it) }
         listenWeatherList()
         ui.updateWeather.setOnClickListener {
-            refreshWeather()
+            model.getWeather()
+//            refreshWeather()
             listenWeatherList()
         }
         ui.locationList.setOnClickListener {
@@ -47,16 +49,11 @@ class WeatherDetailsFragment : Fragment() {
     }
 
     private fun listenWeatherList() {
-        model.selectedWeather.observe(viewLifecycleOwner) {
-            with (ui) {
-                textFieldLocation.text = it.location.name
-                textFieldTemperature.text = it.temperature
-                textFieldFeelsLike.text = it.feelsLike
-                textFieldHumidity.text = it.humidity
-                textFieldWind.text = it.wind
-                textFieldPressure.text = it.pressure
-                currentTime.text = it.currentTime
-            }
+        model.weatherGeneralLive.observe(viewLifecycleOwner) {
+            view?.snackMessage("Now ${it.fact.temp} Now daytime ${it.fact.feelsLike}")
+        }
+        model.responseFailureLive.observe(viewLifecycleOwner) {
+            view?.snackMessage(it.toString())
         }
     }
 

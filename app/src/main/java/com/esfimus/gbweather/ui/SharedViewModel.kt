@@ -1,13 +1,16 @@
-package com.esfimus.gbweather.domain
+package com.esfimus.gbweather.ui
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.esfimus.gbweather.data.FavoriteWeather
-import com.esfimus.gbweather.data.Location
-import com.esfimus.gbweather.data.Repository
-import com.esfimus.gbweather.data.Weather
+import com.esfimus.gbweather.domain.FavoriteWeather
+import com.esfimus.gbweather.domain.Location
+import com.esfimus.gbweather.domain.Repository
+import com.esfimus.gbweather.domain.Weather
+import com.esfimus.gbweather.domain.api.Loadable
+import com.esfimus.gbweather.domain.api.WeatherGeneral
+import com.esfimus.gbweather.domain.api.LoadWeather
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
@@ -23,6 +26,9 @@ class SharedViewModel : ViewModel() {
     val selectedWeather: MutableLiveData<Weather> = MutableLiveData()
     val weatherList: MutableLiveData<List<Weather>> = MutableLiveData()
 
+    val weatherGeneralLive: MutableLiveData<WeatherGeneral> = MutableLiveData()
+    val responseFailureLive: MutableLiveData<String> = MutableLiveData()
+
     // connection to data
     private val repositoryData = Repository()
     private var locationsList = FavoriteWeather()
@@ -34,6 +40,31 @@ class SharedViewModel : ViewModel() {
 
     // auxiliary parameters
     private val emptyLocation = Location("", 0.0, 0.0)
+
+    private fun receiveWeather(weather: WeatherGeneral) {
+        weatherGeneralLive.value = weather
+    }
+
+    private fun weatherFail(responseCode: Int) {
+        when (responseCode) {
+            in 300 until 400 -> responseFailureLive.value = "Redirection"
+            in 400 until 500 -> responseFailureLive.value = "Client Error"
+            in 500 until 600 -> responseFailureLive.value = "Server Error"
+        }
+    }
+
+    fun getWeather() {
+        val loadableWeather: Loadable = object : Loadable {
+            override fun loaded(weather: WeatherGeneral) {
+                receiveWeather(weather)
+            }
+            override fun failed(responseCode: Int) {
+                weatherFail(responseCode)
+            }
+        }
+        val loader = LoadWeather(Location("Sea", 34.98, 19.58), loadableWeather)
+        loader.loadWeather()
+    }
 
     /**
      * Saves whole list of favorite locations and index of selected location

@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.add
 
 import android.content.Context
 import android.os.Bundle
@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.databinding.FragmentAddWeatherLocationBinding
-import com.esfimus.gbweather.domain.SharedViewModel
+import com.esfimus.gbweather.ui.SharedViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class AddWeatherLocationFragment : Fragment() {

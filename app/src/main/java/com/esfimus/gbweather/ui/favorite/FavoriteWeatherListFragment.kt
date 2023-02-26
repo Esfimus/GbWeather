@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.favorite
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
-import com.esfimus.gbweather.domain.RecyclerAdapter
-import com.esfimus.gbweather.domain.SharedViewModel
-import com.esfimus.gbweather.domain.clicks.OnListItemCLick
-import com.esfimus.gbweather.domain.clicks.OnListItemLongClick
+import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
+import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
+import com.esfimus.gbweather.ui.add.AddWeatherLocationFragment
 
 class FavoriteWeatherListFragment : Fragment() {
 
@@ -54,7 +54,7 @@ class FavoriteWeatherListFragment : Fragment() {
                 }
             })
             // reaction on item long click
-            customAdapter.setListItemLongClickListener(object : OnListItemLongClick{
+            customAdapter.setListItemLongClickListener(object : OnListItemLongClick {
                 override fun onLongCLick(position: Int, itemView: View) {
                     popupMenu(position, itemView)
                 }

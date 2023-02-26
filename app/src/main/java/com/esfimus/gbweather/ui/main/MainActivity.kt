@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

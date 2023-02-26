@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.data
+package com.esfimus.gbweather.domain
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

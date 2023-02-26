@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.domain
+package com.esfimus.gbweather.ui.favorite
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.esfimus.gbweather.R
-import com.esfimus.gbweather.data.Weather
+import com.esfimus.gbweather.domain.Weather
 import com.esfimus.gbweather.databinding.RecyclerviewItemBinding
-import com.esfimus.gbweather.domain.clicks.OnListItemCLick
-import com.esfimus.gbweather.domain.clicks.OnListItemLongClick
+import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
+import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
 
 class RecyclerAdapter(private val itemsList: List<Weather>) :
     RecyclerView.Adapter<RecyclerAdapter.CustomViewHolder>() {
