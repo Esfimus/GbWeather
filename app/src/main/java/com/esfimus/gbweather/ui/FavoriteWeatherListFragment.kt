@@ -18,8 +18,8 @@ import com.esfimus.gbweather.domain.clicks.OnListItemLongClick
 
 class FavoriteWeatherListFragment : Fragment() {
 
-    private var bindingNullable: FragmentFavoriteWeatherListBinding? = null
-    private val binding get() = bindingNullable!!
+    private var _ui: FragmentFavoriteWeatherListBinding? = null
+    private val ui get() = _ui!!
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
 
@@ -29,8 +29,8 @@ class FavoriteWeatherListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
-        bindingNullable = FragmentFavoriteWeatherListBinding.inflate(inflater, container, false)
-        return binding.root
+        _ui = FragmentFavoriteWeatherListBinding.inflate(inflater, container, false)
+        return ui.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class FavoriteWeatherListFragment : Fragment() {
         context?.let { model.load(it) }
         model.weatherList.observe(viewLifecycleOwner) {
             val customAdapter = RecyclerAdapter(it)
-            binding.weatherRecycler.apply {
+            ui.weatherRecycler.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = customAdapter
             }
@@ -60,7 +60,7 @@ class FavoriteWeatherListFragment : Fragment() {
                 }
             })
         }
-        binding.addWeatherLocation.setOnClickListener {
+        ui.addWeatherLocation.setOnClickListener {
             openFragment(AddWeatherLocationFragment.newInstance())
         }
     }
@@ -91,9 +91,8 @@ class FavoriteWeatherListFragment : Fragment() {
             .commit()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        bindingNullable = null
+    override fun onDestroyView() {
+        _ui = null
+        super.onDestroyView()
     }
-
 }

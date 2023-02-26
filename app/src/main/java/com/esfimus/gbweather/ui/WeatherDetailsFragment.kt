@@ -14,8 +14,8 @@ import com.google.android.material.snackbar.Snackbar
 
 class WeatherDetailsFragment : Fragment() {
 
-    private var bindingNullable: FragmentWeatherDetailsBinding? = null
-    private val binding get() = bindingNullable!!
+    private var _ui: FragmentWeatherDetailsBinding? = null
+    private val ui get() = _ui!!
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
 
@@ -25,8 +25,8 @@ class WeatherDetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        bindingNullable = FragmentWeatherDetailsBinding.inflate(inflater, container, false)
-        return binding.root
+        _ui = FragmentWeatherDetailsBinding.inflate(inflater, container, false)
+        return ui.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,18 +37,18 @@ class WeatherDetailsFragment : Fragment() {
     private fun initAction() {
         context?.let { model.load(it) }
         listenWeatherList()
-        binding.updateWeather.setOnClickListener {
+        ui.updateWeather.setOnClickListener {
             refreshWeather()
             listenWeatherList()
         }
-        binding.locationList.setOnClickListener {
+        ui.locationList.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
         }
     }
 
     private fun listenWeatherList() {
         model.selectedWeather.observe(viewLifecycleOwner) {
-            with (binding) {
+            with (ui) {
                 textFieldLocation.text = it.location.name
                 textFieldTemperature.text = it.temperature
                 textFieldFeelsLike.text = it.feelsLike
@@ -82,8 +82,8 @@ class WeatherDetailsFragment : Fragment() {
         Snackbar.make(this, text, length).show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        bindingNullable = null
+    override fun onDestroyView() {
+        _ui = null
+        super.onDestroyView()
     }
 }

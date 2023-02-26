@@ -15,8 +15,8 @@ import com.google.android.material.snackbar.Snackbar
 
 class AddWeatherLocationFragment : Fragment() {
 
-    private var bindingNullable: FragmentAddWeatherLocationBinding? = null
-    private val binding get() = bindingNullable!!
+    private var _ui: FragmentAddWeatherLocationBinding? = null
+    private val ui get() = _ui!!
 
     companion object {
         fun newInstance() = AddWeatherLocationFragment()
@@ -24,8 +24,8 @@ class AddWeatherLocationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
-        bindingNullable = FragmentAddWeatherLocationBinding.inflate(inflater, container, false)
-        return binding.root
+        _ui = FragmentAddWeatherLocationBinding.inflate(inflater, container, false)
+        return ui.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,9 +34,9 @@ class AddWeatherLocationFragment : Fragment() {
     }
 
     private fun initAction() {
-        val searchView: TextView = binding.searchLocationText
+        val searchView: TextView = ui.searchLocationText
         val model: SharedViewModel by lazy { ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
-        binding.searchLocationButton.setOnClickListener {
+        ui.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
             if (model.addWeatherLocation(searchView.text.toString()) == 1) {
                 model.save()
@@ -59,9 +59,8 @@ class AddWeatherLocationFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        bindingNullable = null
+    override fun onDestroyView() {
+        _ui = null
+        super.onDestroyView()
     }
-
 }
