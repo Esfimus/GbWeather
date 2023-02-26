@@ -7,8 +7,4 @@ data class Weather(val location: Location) {
     var wind: String? = null
     var pressure: String? = null
     var currentTime: String? = null
-
-    class Location(
-        val name: String
-    )
 }

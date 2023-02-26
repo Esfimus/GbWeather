@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.esfimus.gbweather.data.FavoriteWeather
+import com.esfimus.gbweather.data.Location
 import com.esfimus.gbweather.data.Repository
 import com.esfimus.gbweather.data.Weather
 import com.google.gson.GsonBuilder
@@ -30,6 +31,9 @@ class SharedViewModel : ViewModel() {
     // saving parameters
     private var saveList: SharedPreferences? = null
     private var saveIndex: SharedPreferences? = null
+
+    // auxiliary parameters
+    private val emptyLocation = Location("", 0.0, 0.0)
 
     /**
      * Saves whole list of favorite locations and index of selected location
@@ -74,7 +78,7 @@ class SharedViewModel : ViewModel() {
     fun addWeatherLocation(requestLocation: String): Int {
         // location is valid and not in favorites list yet, permission to add location
         return if (checkLocation(requestLocation)) {
-            val newWeather = Weather(Weather.Location(requestLocation.uppercase()))
+            val newWeather = Weather(repositoryData.getLocation(requestLocation) ?: emptyLocation)
             repositoryData.updateWeather(newWeather)
             locationsList.addWeather(newWeather)
             weatherList.value = locationsList.favoriteWeatherList
@@ -98,7 +102,7 @@ class SharedViewModel : ViewModel() {
             if (selectedWeatherIndex!! >= 0) {
                 selectedWeather.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
             } else {
-                selectedWeather.value = Weather(Weather.Location(""))
+                selectedWeather.value = Weather(emptyLocation)
             }
             save()
         }
@@ -108,7 +112,7 @@ class SharedViewModel : ViewModel() {
      * Checks if requested location name is valid and not in favorite list
      */
     private fun checkLocation(requestLocation: String): Boolean {
-        return (repositoryData.isAvailable(requestLocation) && !locationIsFavorite(requestLocation))
+        return (repositoryData.getLocation(requestLocation) != null && !locationIsFavorite(requestLocation))
     }
 
     /**
