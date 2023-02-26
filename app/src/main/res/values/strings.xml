@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">Weather</string>
     <string name="location">Location</string>
-    <string name="message">Message</string>
-    <string name="send">Send</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="check">Check</string>
+    <string name="enter_location">Enter location</string>
+    <string name="feels_like">Feels like</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="update_weather">Update weather</string>
+    <string name="time">Last updated</string>
+    <string name="add_weather_location">Add weather location</string>
+    <string name="search_location">Search location</string>
+    <string name="delete">Delete</string>
 </resources>
