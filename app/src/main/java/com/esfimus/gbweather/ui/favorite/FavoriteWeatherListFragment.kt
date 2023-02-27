@@ -72,7 +72,7 @@ class FavoriteWeatherListFragment : Fragment() {
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.delete_popup -> {
-//                        model.deleteWeatherLocation(position)
+                        model.deleteWeatherLocation(position)
                         true
                     }
                     else -> false

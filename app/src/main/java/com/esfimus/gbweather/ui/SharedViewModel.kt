@@ -29,17 +29,17 @@ class SharedViewModel : ViewModel() {
     // connection to data
     private val repositoryData = Repository()
     private var locationsList = FavoriteWeather()
-    private var selectedWeatherIndex: Int? = null
+    private var selectedWeatherIndex = 0
 
     // saving parameters
     private var saveList: SharedPreferences? = null
     private var saveIndex: SharedPreferences? = null
 
-    private var loadedWeather: WeatherView? = null
-    private fun loadWeather(location: Location) {
+    private fun updateWeather(location: Location, position: Int) {
         val loadableWeather: Loadable = object : Loadable {
             override fun loaded(weather: WeatherView) {
-                getWeather(weather)
+                locationsList.favoriteWeatherList[position] = weather
+                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
             }
             override fun failed(responseCode: Int) {
                 when (responseCode) {
@@ -53,17 +53,13 @@ class SharedViewModel : ViewModel() {
         loader.loadWeather()
     }
 
-    fun getWeather(weather: WeatherView) {
-        loadedWeather = weather
-    }
-
     /**
      * Saves whole list of favorite locations and index of selected location
      */
-    fun save() {
+    private fun save() {
         val locationListJson = GsonBuilder().create().toJson(locationsList)
         saveList?.edit()?.putString(LOCATION_LIST, locationListJson)?.apply()
-        saveIndex?.edit()?.putInt(SELECTED_WEATHER_INDEX, selectedWeatherIndex!!)?.apply()
+        saveIndex?.edit()?.putInt(SELECTED_WEATHER_INDEX, selectedWeatherIndex)?.apply()
     }
 
     /**
@@ -82,14 +78,14 @@ class SharedViewModel : ViewModel() {
         if (retrievedWeatherIndex != null) {
             selectedWeatherIndex = retrievedWeatherIndex
             if (selectedWeatherIndex in 0 until locationsList.favoriteWeatherList.size) {
-                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
+                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
             }
         }
     }
 
     fun switchWeatherLocation(position: Int) {
         selectedWeatherIndex = position
-        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex ?: 0]
+        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
         save()
     }
 
@@ -99,40 +95,40 @@ class SharedViewModel : ViewModel() {
      */
     fun addWeatherLocation(requestLocation: String): String {
         // location is valid and not in favorites list yet, permission to add location
-        if (checkLocation(requestLocation)) {
-            loadWeather(repositoryData.getLocation(requestLocation)!!)
-            return if (loadedWeather != null) {
-                locationsList.addWeather(loadedWeather!!)
-                loadedWeather = null
-                weatherViewListLive.value = locationsList.favoriteWeatherList
-                selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex ?: 0]
-                "ok"
-            } else {
-                "null"
-            }
-        // location is valid but already in favorites list, cannot be added
+        return if (checkLocation(requestLocation)) {
+            val validLocation = repositoryData.getLocation(requestLocation)!!
+            locationsList.addWeather(WeatherView(validLocation))
+            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
+            updateWeather(validLocation, selectedWeatherIndex)
+            weatherViewListLive.value = locationsList.favoriteWeatherList
+            save()
+            "ok"
+            // location is valid but already in favorites list, cannot be added
         } else if (locationIsFavorite(requestLocation)) {
-            return "in list"
-        // location is not valid, cannot be added
+            "in list"
+            // location is not valid, cannot be added
         } else {
-            return "not found"
+            "not found"
         }
     }
 
-//    fun deleteWeatherLocation(position: Int) {
-//        if (position in 0 until locationsList.favoriteWeatherListView.size) {
-//            locationsList.deleteWeather(position)
-//            weatherViewList.value = locationsList.favoriteWeatherListView
-//            selectedWeatherIndex = locationsList.favoriteWeatherListView.size - 1
-//            if (selectedWeatherIndex!! >= 0) {
-//                selectedWeatherView.value = locationsList.favoriteWeatherListView[selectedWeatherIndex!!]
-//            } else {
-//                selectedWeatherView.value = WeatherView(emptyLocation)
-//            }
-//            save()
-//        }
-//    }
+    fun deleteWeatherLocation(position: Int) {
+        if (position in 0 until locationsList.favoriteWeatherList.size) {
+            locationsList.deleteWeather(position)
+            weatherViewListLive.value = locationsList.favoriteWeatherList
+            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
+            if (selectedWeatherIndex >= 0) {
+                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
+            } else {
+                selectedWeatherLive.value = WeatherView(Location("", 0.0, 0.0))
+            }
+            save()
+        }
+    }
+
+    fun updateSelectedWeather() {
+        updateWeather(locationsList.favoriteWeatherList[selectedWeatherIndex].location, selectedWeatherIndex)
+    }
 
     /**
      * Checks if requested location name is valid and not in favorite list
@@ -152,17 +148,6 @@ class SharedViewModel : ViewModel() {
         }
         return false
     }
-
-    /**
-     * Updates weather parameters
-     */
-//    fun updateWeather() {
-//        for (weather in locationsList.favoriteWeatherList) {
-//            repositoryData.updateWeather(weather)
-//        }
-//        weatherViewListLive.value = locationsList.favoriteWeatherList
-//        save()
-//    }
 
     /**
      * Checks if favorite list is not empty

@@ -6,14 +6,24 @@ import java.time.format.DateTimeFormatter
 
 data class WeatherView(
     val location: Location,
-    val weatherLoaded: WeatherLoaded
+    val weatherLoaded: WeatherLoaded? = null
     ) {
     val currentTimeView = currentDateAndTime()
-    val temperatureView = "${weatherLoaded.fact.temp}°"
-    val feelsLikeView = "Feels like ${weatherLoaded.fact.feelsLike}°"
-    val humidityView = "Humidity ${weatherLoaded.fact.humidity}%"
-    val windView = "Wind ${weatherLoaded.fact.windSpeed} m/s ${weatherLoaded.fact.windDir.uppercase()}"
-    val pressureView = "Pressure ${weatherLoaded.fact.pressureMm} mmHg"
+    var temperatureView = ""
+    var feelsLikeView = ""
+    var humidityView = ""
+    var windView = ""
+    var pressureView = ""
+
+    init {
+        if (weatherLoaded != null) {
+            temperatureView = "${weatherLoaded.fact.temp}°"
+            feelsLikeView = "Feels like ${weatherLoaded.fact.feelsLike}°"
+            humidityView = "Humidity ${weatherLoaded.fact.humidity}%"
+            windView = "Wind ${weatherLoaded.fact.windSpeed} m/s ${weatherLoaded.fact.windDir.uppercase()}"
+            pressureView = "Pressure ${weatherLoaded.fact.pressureMm} mmHg"
+        }
+    }
 }
 
 private fun currentDateAndTime(): String {

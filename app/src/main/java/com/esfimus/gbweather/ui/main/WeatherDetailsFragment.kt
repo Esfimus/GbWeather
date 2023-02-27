@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
-import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
@@ -52,8 +51,8 @@ class WeatherDetailsFragment : Fragment() {
         model.selectedWeatherLive.observe(viewLifecycleOwner) {
             with (ui) {
                 textFieldLocation.text = it.location.name
-                textFieldLatitude.text = it.weatherLoaded.info.lat.toString()
-                textFieldLongitude.text = it.weatherLoaded.info.lon.toString()
+                textFieldLatitude.text = it.location.lat.toString()
+                textFieldLongitude.text = it.location.lon.toString()
                 textFieldTemperature.text = it.temperatureView
                 textFieldFeelsLike.text = it.feelsLikeView
                 textFieldHumidity.text = it.humidityView
@@ -69,7 +68,7 @@ class WeatherDetailsFragment : Fragment() {
 
     private fun refreshWeather() {
         if (model.favoritesAdded()) {
-//            model.updateWeather() // TODO check index
+            model.updateSelectedWeather()
         } else {
             view?.snackMessage("Please, select location")
         }

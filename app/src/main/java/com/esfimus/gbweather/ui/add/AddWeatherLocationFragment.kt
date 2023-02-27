@@ -39,10 +39,7 @@ class AddWeatherLocationFragment : Fragment() {
         ui.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
             when (model.addWeatherLocation(searchView.text.toString())) {
-                "ok" -> {
-                    model.save()
-                    requireActivity().supportFragmentManager.popBackStack()
-                }
+                "ok" -> requireActivity().supportFragmentManager.popBackStack()
                 "null" -> view?.snackMessage("Location is not available")
                 "in list" -> view?.snackMessage("Location is already favorite")
                 else -> view?.snackMessage("Location is not found")
