@@ -13,4 +13,6 @@
     <string name="add_weather_location">Add weather location</string>
     <string name="search_location">Search location</string>
     <string name="delete">Delete</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.add
 
 import android.content.Context
 import android.os.Bundle
@@ -10,13 +10,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.databinding.FragmentAddWeatherLocationBinding
-import com.esfimus.gbweather.domain.SharedViewModel
+import com.esfimus.gbweather.ui.SharedViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class AddWeatherLocationFragment : Fragment() {
 
-    private var bindingNullable: FragmentAddWeatherLocationBinding? = null
-    private val binding get() = bindingNullable!!
+    private var _ui: FragmentAddWeatherLocationBinding? = null
+    private val ui get() = _ui!!
 
     companion object {
         fun newInstance() = AddWeatherLocationFragment()
@@ -24,8 +24,8 @@ class AddWeatherLocationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
-        bindingNullable = FragmentAddWeatherLocationBinding.inflate(inflater, container, false)
-        return binding.root
+        _ui = FragmentAddWeatherLocationBinding.inflate(inflater, container, false)
+        return ui.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,17 +34,15 @@ class AddWeatherLocationFragment : Fragment() {
     }
 
     private fun initAction() {
-        val searchView: TextView = binding.searchLocationText
+        val searchView: TextView = ui.searchLocationText
         val model: SharedViewModel by lazy { ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
-        binding.searchLocationButton.setOnClickListener {
+        ui.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
-            if (model.addWeatherLocation(searchView.text.toString()) == 1) {
-                model.save()
-                requireActivity().supportFragmentManager.popBackStack()
-            } else if (model.addWeatherLocation(searchView.text.toString()) == 0){
-                view?.snackMessage("Location is already favorite")
-            } else {
-                view?.snackMessage("Location is not found")
+            when (model.addWeatherLocation(searchView.text.toString())) {
+                "ok" -> requireActivity().supportFragmentManager.popBackStack()
+                "null" -> view?.snackMessage("Location is not available")
+                "in list" -> view?.snackMessage("Location is already favorite")
+                else -> view?.snackMessage("Location is not found")
             }
         }
     }
@@ -59,9 +57,8 @@ class AddWeatherLocationFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        bindingNullable = null
+    override fun onDestroyView() {
+        _ui = null
+        super.onDestroyView()
     }
-
 }

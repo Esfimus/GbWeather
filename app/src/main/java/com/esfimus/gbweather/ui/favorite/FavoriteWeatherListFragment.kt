@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.favorite
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,15 +11,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
-import com.esfimus.gbweather.domain.RecyclerAdapter
-import com.esfimus.gbweather.domain.SharedViewModel
-import com.esfimus.gbweather.domain.clicks.OnListItemCLick
-import com.esfimus.gbweather.domain.clicks.OnListItemLongClick
+import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
+import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
+import com.esfimus.gbweather.ui.add.AddWeatherLocationFragment
 
 class FavoriteWeatherListFragment : Fragment() {
 
-    private var bindingNullable: FragmentFavoriteWeatherListBinding? = null
-    private val binding get() = bindingNullable!!
+    private var _ui: FragmentFavoriteWeatherListBinding? = null
+    private val ui get() = _ui!!
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
 
@@ -29,8 +29,8 @@ class FavoriteWeatherListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
-        bindingNullable = FragmentFavoriteWeatherListBinding.inflate(inflater, container, false)
-        return binding.root
+        _ui = FragmentFavoriteWeatherListBinding.inflate(inflater, container, false)
+        return ui.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,9 +40,9 @@ class FavoriteWeatherListFragment : Fragment() {
 
     private fun initDynamicList() {
         context?.let { model.load(it) }
-        model.weatherList.observe(viewLifecycleOwner) {
+        model.weatherViewListLive.observe(viewLifecycleOwner) {
             val customAdapter = RecyclerAdapter(it)
-            binding.weatherRecycler.apply {
+            ui.weatherRecycler.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = customAdapter
             }
@@ -54,13 +54,13 @@ class FavoriteWeatherListFragment : Fragment() {
                 }
             })
             // reaction on item long click
-            customAdapter.setListItemLongClickListener(object : OnListItemLongClick{
+            customAdapter.setListItemLongClickListener(object : OnListItemLongClick {
                 override fun onLongCLick(position: Int, itemView: View) {
                     popupMenu(position, itemView)
                 }
             })
         }
-        binding.addWeatherLocation.setOnClickListener {
+        ui.addWeatherLocation.setOnClickListener {
             openFragment(AddWeatherLocationFragment.newInstance())
         }
     }
@@ -91,9 +91,8 @@ class FavoriteWeatherListFragment : Fragment() {
             .commit()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        bindingNullable = null
+    override fun onDestroyView() {
+        _ui = null
+        super.onDestroyView()
     }
-
 }

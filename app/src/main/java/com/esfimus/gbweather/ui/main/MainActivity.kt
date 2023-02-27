@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,13 +7,13 @@ import com.esfimus.gbweather.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var ui: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        ui = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(ui.root)
 
         runFragment()
     }

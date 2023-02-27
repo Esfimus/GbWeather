@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.WeatherDetailsFragment">
+    tools:context=".ui.main.WeatherDetailsFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_field_location"
@@ -20,6 +20,30 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_field_latitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin"
+        android:gravity="center"
+        android:hint="@string/latitude"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_field_location" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/text_field_longitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_margin"
+        android:gravity="center"
+        android:hint="@string/longitude"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_field_latitude" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_field_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +53,7 @@
         android:textSize="@dimen/medium_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_field_location" />
+        app:layout_constraintTop_toBottomOf="@id/text_field_longitude" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_field_feels_like"

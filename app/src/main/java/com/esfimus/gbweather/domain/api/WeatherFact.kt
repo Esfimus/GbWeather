@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.data.api
+package com.esfimus.gbweather.domain.api
 
 import com.google.gson.annotations.SerializedName
 

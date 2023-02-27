@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.domain.clicks
+package com.esfimus.gbweather.ui.favorite.clicks
 
 interface OnListItemCLick {
     fun onClick(position: Int)

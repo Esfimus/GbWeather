@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui
+package com.esfimus.gbweather.ui.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,13 +9,14 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
-import com.esfimus.gbweather.domain.SharedViewModel
+import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
 
 class WeatherDetailsFragment : Fragment() {
 
-    private var bindingNullable: FragmentWeatherDetailsBinding? = null
-    private val binding get() = bindingNullable!!
+    private var _ui: FragmentWeatherDetailsBinding? = null
+    private val ui get() = _ui!!
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
 
@@ -25,8 +26,8 @@ class WeatherDetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        bindingNullable = FragmentWeatherDetailsBinding.inflate(inflater, container, false)
-        return binding.root
+        _ui = FragmentWeatherDetailsBinding.inflate(inflater, container, false)
+        return ui.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,32 +38,37 @@ class WeatherDetailsFragment : Fragment() {
     private fun initAction() {
         context?.let { model.load(it) }
         listenWeatherList()
-        binding.updateWeather.setOnClickListener {
+        ui.updateWeather.setOnClickListener {
             refreshWeather()
             listenWeatherList()
         }
-        binding.locationList.setOnClickListener {
+        ui.locationList.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
         }
     }
 
     private fun listenWeatherList() {
-        model.selectedWeather.observe(viewLifecycleOwner) {
-            with (binding) {
+        model.selectedWeatherLive.observe(viewLifecycleOwner) {
+            with (ui) {
                 textFieldLocation.text = it.location.name
-                textFieldTemperature.text = it.temperature
-                textFieldFeelsLike.text = it.feelsLike
-                textFieldHumidity.text = it.humidity
-                textFieldWind.text = it.wind
-                textFieldPressure.text = it.pressure
-                currentTime.text = it.currentTime
+                textFieldLatitude.text = it.location.lat.toString()
+                textFieldLongitude.text = it.location.lon.toString()
+                textFieldTemperature.text = it.temperatureView
+                textFieldFeelsLike.text = it.feelsLikeView
+                textFieldHumidity.text = it.humidityView
+                textFieldWind.text = it.windView
+                textFieldPressure.text = it.pressureView
+                currentTime.text = it.currentTimeView
             }
+        }
+        model.responseFailureLive.observe(viewLifecycleOwner) {
+            view?.snackMessage(it.toString())
         }
     }
 
     private fun refreshWeather() {
         if (model.favoritesAdded()) {
-            model.updateWeatherList()
+            model.updateSelectedWeather()
         } else {
             view?.snackMessage("Please, select location")
         }
@@ -82,8 +88,8 @@ class WeatherDetailsFragment : Fragment() {
         Snackbar.make(this, text, length).show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        bindingNullable = null
+    override fun onDestroyView() {
+        _ui = null
+        super.onDestroyView()
     }
 }
