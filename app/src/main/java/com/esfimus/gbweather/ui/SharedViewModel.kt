@@ -7,9 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.esfimus.gbweather.domain.FavoriteWeather
 import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.domain.Repository
-import com.esfimus.gbweather.domain.Weather
+import com.esfimus.gbweather.domain.WeatherView
 import com.esfimus.gbweather.domain.api.Loadable
-import com.esfimus.gbweather.domain.api.WeatherGeneral
 import com.esfimus.gbweather.domain.api.LoadWeather
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -23,10 +22,8 @@ private const val SELECTED_WEATHER_INDEX = "selected weather index"
 class SharedViewModel : ViewModel() {
 
     // available for view
-    val selectedWeather: MutableLiveData<Weather> = MutableLiveData()
-    val weatherList: MutableLiveData<List<Weather>> = MutableLiveData()
-
-    val weatherGeneralLive: MutableLiveData<WeatherGeneral> = MutableLiveData()
+    val selectedWeatherLive: MutableLiveData<WeatherView> = MutableLiveData()
+    val weatherViewListLive: MutableLiveData<List<WeatherView>> = MutableLiveData()
     val responseFailureLive: MutableLiveData<String> = MutableLiveData()
 
     // connection to data
@@ -38,32 +35,26 @@ class SharedViewModel : ViewModel() {
     private var saveList: SharedPreferences? = null
     private var saveIndex: SharedPreferences? = null
 
-    // auxiliary parameters
-    private val emptyLocation = Location("", 0.0, 0.0)
-
-    private fun receiveWeather(weather: WeatherGeneral) {
-        weatherGeneralLive.value = weather
-    }
-
-    private fun weatherFail(responseCode: Int) {
-        when (responseCode) {
-            in 300 until 400 -> responseFailureLive.value = "Redirection"
-            in 400 until 500 -> responseFailureLive.value = "Client Error"
-            in 500 until 600 -> responseFailureLive.value = "Server Error"
-        }
-    }
-
-    fun getWeather() {
+    private var loadedWeather: WeatherView? = null
+    private fun loadWeather(location: Location) {
         val loadableWeather: Loadable = object : Loadable {
-            override fun loaded(weather: WeatherGeneral) {
-                receiveWeather(weather)
+            override fun loaded(weather: WeatherView) {
+                getWeather(weather)
             }
             override fun failed(responseCode: Int) {
-                weatherFail(responseCode)
+                when (responseCode) {
+                    in 300 until 400 -> responseFailureLive.value = "Redirection"
+                    in 400 until 500 -> responseFailureLive.value = "Client Error"
+                    in 500 until 600 -> responseFailureLive.value = "Server Error"
+                }
             }
         }
-        val loader = LoadWeather(Location("Sea", 34.98, 19.58), loadableWeather)
+        val loader = LoadWeather(location, loadableWeather)
         loader.loadWeather()
+    }
+
+    fun getWeather(weather: WeatherView) {
+        loadedWeather = weather
     }
 
     /**
@@ -86,19 +77,19 @@ class SharedViewModel : ViewModel() {
         if (retrievedList != null) {
             val type: Type = object : TypeToken<FavoriteWeather>() {}.type
             locationsList = GsonBuilder().create().fromJson(retrievedList, type)
-            weatherList.value = locationsList.favoriteWeatherList
+            weatherViewListLive.value = locationsList.favoriteWeatherList
         }
         if (retrievedWeatherIndex != null) {
             selectedWeatherIndex = retrievedWeatherIndex
             if (selectedWeatherIndex in 0 until locationsList.favoriteWeatherList.size) {
-                selectedWeather.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
+                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
             }
         }
     }
 
     fun switchWeatherLocation(position: Int) {
         selectedWeatherIndex = position
-        selectedWeather.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
+        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex ?: 0]
         save()
     }
 
@@ -106,38 +97,42 @@ class SharedViewModel : ViewModel() {
      * Checks if location is valid and it is already in favorite list,
      * adds location and updates LiveData list and selected location index
      */
-    fun addWeatherLocation(requestLocation: String): Int {
+    fun addWeatherLocation(requestLocation: String): String {
         // location is valid and not in favorites list yet, permission to add location
-        return if (checkLocation(requestLocation)) {
-            val newWeather = Weather(repositoryData.getLocation(requestLocation) ?: emptyLocation)
-            repositoryData.updateWeather(newWeather)
-            locationsList.addWeather(newWeather)
-            weatherList.value = locationsList.favoriteWeatherList
-            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-            selectedWeather.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
-            1
+        if (checkLocation(requestLocation)) {
+            loadWeather(repositoryData.getLocation(requestLocation)!!)
+            return if (loadedWeather != null) {
+                locationsList.addWeather(loadedWeather!!)
+                loadedWeather = null
+                weatherViewListLive.value = locationsList.favoriteWeatherList
+                selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
+                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex ?: 0]
+                "ok"
+            } else {
+                "null"
+            }
         // location is valid but already in favorites list, cannot be added
         } else if (locationIsFavorite(requestLocation)) {
-            0
+            return "in list"
         // location is not valid, cannot be added
         } else {
-            -1
+            return "not found"
         }
     }
 
-    fun deleteWeatherLocation(position: Int) {
-        if (position in 0 until locationsList.favoriteWeatherList.size) {
-            locationsList.deleteWeather(position)
-            weatherList.value = locationsList.favoriteWeatherList
-            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-            if (selectedWeatherIndex!! >= 0) {
-                selectedWeather.value = locationsList.favoriteWeatherList[selectedWeatherIndex!!]
-            } else {
-                selectedWeather.value = Weather(emptyLocation)
-            }
-            save()
-        }
-    }
+//    fun deleteWeatherLocation(position: Int) {
+//        if (position in 0 until locationsList.favoriteWeatherListView.size) {
+//            locationsList.deleteWeather(position)
+//            weatherViewList.value = locationsList.favoriteWeatherListView
+//            selectedWeatherIndex = locationsList.favoriteWeatherListView.size - 1
+//            if (selectedWeatherIndex!! >= 0) {
+//                selectedWeatherView.value = locationsList.favoriteWeatherListView[selectedWeatherIndex!!]
+//            } else {
+//                selectedWeatherView.value = WeatherView(emptyLocation)
+//            }
+//            save()
+//        }
+//    }
 
     /**
      * Checks if requested location name is valid and not in favorite list
@@ -161,13 +156,13 @@ class SharedViewModel : ViewModel() {
     /**
      * Updates weather parameters
      */
-    fun updateWeatherList() {
-        for (weather in locationsList.favoriteWeatherList) {
-            repositoryData.updateWeather(weather)
-        }
-        weatherList.value = locationsList.favoriteWeatherList
-        save()
-    }
+//    fun updateWeather() {
+//        for (weather in locationsList.favoriteWeatherList) {
+//            repositoryData.updateWeather(weather)
+//        }
+//        weatherViewListLive.value = locationsList.favoriteWeatherList
+//        save()
+//    }
 
     /**
      * Checks if favorite list is not empty

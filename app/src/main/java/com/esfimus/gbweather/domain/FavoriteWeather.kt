@@ -2,10 +2,10 @@ package com.esfimus.gbweather.domain
 
 class FavoriteWeather {
 
-    val favoriteWeatherList = mutableListOf<Weather>()
+    val favoriteWeatherList = mutableListOf<WeatherView>()
 
-    fun addWeather(weather: Weather) {
-        favoriteWeatherList.add(weather)
+    fun addWeather(weatherView: WeatherView) {
+        favoriteWeatherList.add(weatherView)
     }
 
     fun deleteWeather(index: Int) {

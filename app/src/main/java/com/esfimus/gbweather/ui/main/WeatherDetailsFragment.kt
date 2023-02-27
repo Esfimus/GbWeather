@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
+import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
@@ -39,8 +40,7 @@ class WeatherDetailsFragment : Fragment() {
         context?.let { model.load(it) }
         listenWeatherList()
         ui.updateWeather.setOnClickListener {
-            model.getWeather()
-//            refreshWeather()
+            refreshWeather()
             listenWeatherList()
         }
         ui.locationList.setOnClickListener {
@@ -49,8 +49,18 @@ class WeatherDetailsFragment : Fragment() {
     }
 
     private fun listenWeatherList() {
-        model.weatherGeneralLive.observe(viewLifecycleOwner) {
-            view?.snackMessage("Now ${it.fact.temp} Now daytime ${it.fact.feelsLike}")
+        model.selectedWeatherLive.observe(viewLifecycleOwner) {
+            with (ui) {
+                textFieldLocation.text = it.location.name
+                textFieldLatitude.text = it.weatherLoaded.info.lat.toString()
+                textFieldLongitude.text = it.weatherLoaded.info.lon.toString()
+                textFieldTemperature.text = it.temperatureView
+                textFieldFeelsLike.text = it.feelsLikeView
+                textFieldHumidity.text = it.humidityView
+                textFieldWind.text = it.windView
+                textFieldPressure.text = it.pressureView
+                currentTime.text = it.currentTimeView
+            }
         }
         model.responseFailureLive.observe(viewLifecycleOwner) {
             view?.snackMessage(it.toString())
@@ -59,7 +69,7 @@ class WeatherDetailsFragment : Fragment() {
 
     private fun refreshWeather() {
         if (model.favoritesAdded()) {
-            model.updateWeatherList()
+//            model.updateWeather() // TODO check index
         } else {
             view?.snackMessage("Please, select location")
         }

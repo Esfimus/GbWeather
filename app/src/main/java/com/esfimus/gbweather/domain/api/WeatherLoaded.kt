@@ -2,7 +2,7 @@ package com.esfimus.gbweather.domain.api
 
 import com.google.gson.annotations.SerializedName
 
-data class WeatherGeneral(
+data class WeatherLoaded(
     @SerializedName("fact")
     val fact: WeatherFact,
     @SerializedName("forecast")

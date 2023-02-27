@@ -38,13 +38,14 @@ class AddWeatherLocationFragment : Fragment() {
         val model: SharedViewModel by lazy { ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
         ui.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
-            if (model.addWeatherLocation(searchView.text.toString()) == 1) {
-                model.save()
-                requireActivity().supportFragmentManager.popBackStack()
-            } else if (model.addWeatherLocation(searchView.text.toString()) == 0){
-                view?.snackMessage("Location is already favorite")
-            } else {
-                view?.snackMessage("Location is not found")
+            when (model.addWeatherLocation(searchView.text.toString())) {
+                "ok" -> {
+                    model.save()
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+                "null" -> view?.snackMessage("Location is not available")
+                "in list" -> view?.snackMessage("Location is already favorite")
+                else -> view?.snackMessage("Location is not found")
             }
         }
     }

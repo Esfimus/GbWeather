@@ -40,7 +40,7 @@ class FavoriteWeatherListFragment : Fragment() {
 
     private fun initDynamicList() {
         context?.let { model.load(it) }
-        model.weatherList.observe(viewLifecycleOwner) {
+        model.weatherViewListLive.observe(viewLifecycleOwner) {
             val customAdapter = RecyclerAdapter(it)
             ui.weatherRecycler.apply {
                 layoutManager = LinearLayoutManager(context)
@@ -72,7 +72,7 @@ class FavoriteWeatherListFragment : Fragment() {
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.delete_popup -> {
-                        model.deleteWeatherLocation(position)
+//                        model.deleteWeatherLocation(position)
                         true
                     }
                     else -> false
