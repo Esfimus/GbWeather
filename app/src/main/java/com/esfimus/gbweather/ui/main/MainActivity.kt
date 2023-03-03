@@ -3,6 +3,7 @@ package com.esfimus.gbweather.ui.main
 import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.WEATHER_BROADCAST_INTENT
 import com.esfimus.gbweather.databinding.ActivityMainBinding
@@ -20,7 +21,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(ui.root)
 
         runFragment()
-        registerReceiver(receiver, IntentFilter(WEATHER_BROADCAST_INTENT))
+        LocalBroadcastManager
+            .getInstance(this)
+            .registerReceiver(receiver, IntentFilter(WEATHER_BROADCAST_INTENT))
     }
 
     private fun runFragment() {
