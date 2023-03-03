@@ -1,4 +1,6 @@
-package com.esfimus.gbweather.domain
+package com.esfimus.gbweather.data
+
+import com.esfimus.gbweather.domain.Location
 
 class Repository {
 

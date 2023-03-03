@@ -1,14 +1,18 @@
 package com.esfimus.gbweather.ui.main
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.esfimus.gbweather.R
+import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
+import com.esfimus.gbweather.domain.Location
+import com.esfimus.gbweather.domain.broadcast.BroadcastService
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
@@ -33,6 +37,7 @@ class WeatherDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAction()
+        startBroadcastService()
     }
 
     private fun initAction() {
@@ -44,6 +49,20 @@ class WeatherDetailsFragment : Fragment() {
         }
         ui.locationList.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
+        }
+    }
+
+    private fun startBroadcastService() {
+        var location: Location? = null
+        model.selectedWeatherLive.observe(viewLifecycleOwner) {
+            location = it.location
+        }
+        ui.updateWeatherBroadcast.setOnClickListener {
+            context?.let {
+                it.startService(Intent(it, BroadcastService::class.java).apply {
+                    putExtra(WEATHER_LOCATION_EXTRA, location)
+                })
+            }
         }
     }
 

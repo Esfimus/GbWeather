@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.esfimus.gbweather.domain.FavoriteWeather
 import com.esfimus.gbweather.domain.Location
-import com.esfimus.gbweather.domain.Repository
+import com.esfimus.gbweather.data.Repository
 import com.esfimus.gbweather.domain.WeatherView
 import com.esfimus.gbweather.domain.api.Loadable
 import com.esfimus.gbweather.domain.api.LoadWeather
