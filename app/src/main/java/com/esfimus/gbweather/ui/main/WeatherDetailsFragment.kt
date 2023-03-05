@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import coil.api.load
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
+import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.domain.broadcast.BroadcastService
@@ -67,6 +70,9 @@ class WeatherDetailsFragment : Fragment() {
     }
 
     private fun listenWeatherList() {
+        val weatherIcon: ImageView = ui.weatherIcon
+        weatherIcon.load(weather_icon_link)
+        val currentWeatherIcon: ImageView = ui.currentWeatherIcon
         model.selectedWeatherLive.observe(viewLifecycleOwner) {
             with (ui) {
                 textFieldLocation.text = it.location.name
@@ -78,6 +84,7 @@ class WeatherDetailsFragment : Fragment() {
                 textFieldWind.text = it.windView
                 textFieldPressure.text = it.pressureView
                 currentTime.text = it.currentTimeView
+
             }
         }
         model.responseFailureLive.observe(viewLifecycleOwner) {
