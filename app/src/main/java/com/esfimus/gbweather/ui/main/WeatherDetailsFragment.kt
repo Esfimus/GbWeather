@@ -5,11 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.load
+import coil.request.ImageRequest
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
+import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.domain.broadcast.BroadcastService
@@ -67,6 +73,9 @@ class WeatherDetailsFragment : Fragment() {
     }
 
     private fun listenWeatherList() {
+        val weatherIcon: ImageView = ui.weatherIcon
+        weatherIcon.load(weather_icon_link)
+        val currentWeatherIcon: ImageView = ui.currentWeatherIcon
         model.selectedWeatherLive.observe(viewLifecycleOwner) {
             with (ui) {
                 textFieldLocation.text = it.location.name
@@ -78,11 +87,25 @@ class WeatherDetailsFragment : Fragment() {
                 textFieldWind.text = it.windView
                 textFieldPressure.text = it.pressureView
                 currentTime.text = it.currentTimeView
+                currentWeatherIcon.loadSvg("https://yastatic.net/weather/i/icons/funky/dark/${it.weatherLoaded?.fact?.icon}.svg")
             }
         }
         model.responseFailureLive.observe(viewLifecycleOwner) {
             view?.snackMessage(it.toString())
         }
+    }
+
+    private fun ImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(this.context)
+            .components { add(SvgDecoder.Factory()) }
+            .build()
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+        imageLoader.enqueue(request)
     }
 
     private fun refreshWeather() {

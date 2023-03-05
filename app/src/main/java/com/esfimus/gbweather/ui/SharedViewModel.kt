@@ -2,17 +2,21 @@ package com.esfimus.gbweather.ui
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.esfimus.gbweather.data.Repository
 import com.esfimus.gbweather.domain.FavoriteWeather
 import com.esfimus.gbweather.domain.Location
-import com.esfimus.gbweather.data.Repository
 import com.esfimus.gbweather.domain.WeatherView
-import com.esfimus.gbweather.domain.api.Loadable
-import com.esfimus.gbweather.domain.api.LoadWeather
+import com.esfimus.gbweather.domain.api.*
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.lang.reflect.Type
+import kotlin.random.Random
 
 private const val PREFERENCE_LIST = "preference list"
 private const val PREFERENCE_INDEX = "preference index"
@@ -35,11 +39,34 @@ class SharedViewModel : ViewModel() {
     private var saveList: SharedPreferences? = null
     private var saveIndex: SharedPreferences? = null
 
+    /**
+     * Imitates weather update to test app functionality
+     */
+    private fun updateWeatherImitation(location: Location, position: Int) {
+        val weather = WeatherView(location, WeatherLoaded(
+            WeatherFact("condition", "daytime", Random.nextInt(-30,30),
+                Random.nextInt(10,100), "icon", Random.nextInt(0, 10),
+                true, Random.nextInt(735,745), Random.nextInt(100,200),
+                "season", Random.nextInt(-30,30), "wind", 0.0, 0.0),
+            WeatherForecast("date", 0, 0, "moon", listOf(), "sunrise", "sunset", 0),
+            WeatherInfo(location.lat, location.lon, "url"),
+            0,
+            "nowDt")
+        )
+        locationsList.favoriteWeatherList[position] = weather
+        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
+        save()
+    }
+
+    /**
+     * Basic way of uploading data from weather API
+     */
     private fun updateWeather(location: Location, position: Int) {
         val loadableWeather: Loadable = object : Loadable {
             override fun loaded(weather: WeatherView) {
                 locationsList.favoriteWeatherList[position] = weather
                 selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
+                save()
             }
             override fun failed(responseCode: Int) {
                 when (responseCode) {
@@ -51,6 +78,31 @@ class SharedViewModel : ViewModel() {
         }
         val loader = LoadWeather(location, loadableWeather)
         loader.loadWeather()
+    }
+
+    /**
+     * Uploading data from weather API using Retrofit
+     */
+    private fun updateWeatherRetrofit(location: Location, position: Int) {
+        val callBack = object : Callback<WeatherLoaded> {
+            override fun onResponse(call: Call<WeatherLoaded>, response: Response<WeatherLoaded>) {
+                val weatherLoaded: WeatherLoaded? = response.body()
+                val weather = WeatherView(location, weatherLoaded)
+                locationsList.favoriteWeatherList[position] = weather
+                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
+                when (response.code()) {
+                    in 300 until 400 -> responseFailureLive.value = "Redirection"
+                    in 400 until 500 -> responseFailureLive.value = "Client Error"
+                    in 500 until 600 -> responseFailureLive.value = "Server Error"
+                }
+                save()
+            }
+            override fun onFailure(call: Call<WeatherLoaded>, t: Throwable) {
+                Log.d("RetrofitFailure", "${t.message}")
+            }
+        }
+        val loadRetrofitWeather = LoadRetrofitWeather()
+        loadRetrofitWeather.getWeather(location.lat, location.lon, callBack)
     }
 
     /**
@@ -69,7 +121,7 @@ class SharedViewModel : ViewModel() {
         saveList = context.getSharedPreferences(PREFERENCE_LIST, Context.MODE_PRIVATE)
         saveIndex = context.getSharedPreferences(PREFERENCE_INDEX, Context.MODE_PRIVATE)
         val retrievedList = saveList?.getString(LOCATION_LIST, null)
-        val retrievedWeatherIndex = saveIndex?.getInt(SELECTED_WEATHER_INDEX, -100)
+        val retrievedWeatherIndex = saveIndex?.getInt(SELECTED_WEATHER_INDEX, 0)
         if (retrievedList != null) {
             val type: Type = object : TypeToken<FavoriteWeather>() {}.type
             locationsList = GsonBuilder().create().fromJson(retrievedList, type)
@@ -83,6 +135,9 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Changes selected weather view by index from list
+     */
     fun switchWeatherLocation(position: Int) {
         selectedWeatherIndex = position
         selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
@@ -99,7 +154,7 @@ class SharedViewModel : ViewModel() {
             val validLocation = repositoryData.getLocation(requestLocation)!!
             locationsList.addWeather(WeatherView(validLocation))
             selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-            updateWeather(validLocation, selectedWeatherIndex)
+            updateWeatherRetrofit(validLocation, selectedWeatherIndex)
             weatherViewListLive.value = locationsList.favoriteWeatherList
             save()
             "ok"
@@ -112,6 +167,9 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Deletes specified weather location
+     */
     fun deleteWeatherLocation(position: Int) {
         if (position in 0 until locationsList.favoriteWeatherList.size) {
             locationsList.deleteWeather(position)
@@ -126,8 +184,11 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Updates current selected weather view
+     */
     fun updateSelectedWeather() {
-        updateWeather(locationsList.favoriteWeatherList[selectedWeatherIndex].location, selectedWeatherIndex)
+        updateWeatherRetrofit(locationsList.favoriteWeatherList[selectedWeatherIndex].location, selectedWeatherIndex)
     }
 
     /**

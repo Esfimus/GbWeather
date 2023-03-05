@@ -15,4 +15,5 @@
     <string name="delete">Delete</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
+    <string name="favourite_locations">Favourite locations</string>
 </resources>

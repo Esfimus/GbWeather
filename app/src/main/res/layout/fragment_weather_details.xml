@@ -103,6 +103,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_field_wind" />
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/weather_icon"
+        android:layout_width="@dimen/zero_size"
+        android:layout_height="@dimen/zero_size"
+        android:layout_margin="@dimen/normal_margin"
+        app:layout_constraintStart_toEndOf="@id/text_field_location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_field_location"
+        app:layout_constraintBottom_toBottomOf="@id/text_field_temperature"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/current_weather_icon"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_field_pressure"/>
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/current_time"
         android:layout_width="wrap_content"
@@ -130,7 +148,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/normal_margin"
-        android:contentDescription="@string/update_weather"
+        android:contentDescription="@string/favourite_locations"
         android:src="@drawable/baseline_view_list_24"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
