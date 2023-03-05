@@ -9,7 +9,10 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import coil.api.load
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.load
+import coil.request.ImageRequest
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
 import com.esfimus.gbweather.data.weather_icon_link
@@ -84,12 +87,25 @@ class WeatherDetailsFragment : Fragment() {
                 textFieldWind.text = it.windView
                 textFieldPressure.text = it.pressureView
                 currentTime.text = it.currentTimeView
-
+                currentWeatherIcon.loadSvg("https://yastatic.net/weather/i/icons/funky/dark/${it.weatherLoaded?.fact?.icon}.svg")
             }
         }
         model.responseFailureLive.observe(viewLifecycleOwner) {
             view?.snackMessage(it.toString())
         }
+    }
+
+    private fun ImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(this.context)
+            .components { add(SvgDecoder.Factory()) }
+            .build()
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+        imageLoader.enqueue(request)
     }
 
     private fun refreshWeather() {
