@@ -40,7 +40,7 @@ class FavoriteWeatherListFragment : Fragment() {
 
     private fun initDynamicList() {
         context?.let { model.load(it) }
-        model.weatherViewListLive.observe(viewLifecycleOwner) {
+        model.weatherPresenterListLive.observe(viewLifecycleOwner) {
             val customAdapter = RecyclerAdapter(it)
             ui.weatherRecycler.apply {
                 layoutManager = LinearLayoutManager(context)

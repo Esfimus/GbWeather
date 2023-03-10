@@ -18,7 +18,7 @@ import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
 import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.Location
-import com.esfimus.gbweather.domain.broadcast.BroadcastService
+import com.esfimus.gbweather.ui.broadcast.BroadcastService
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar

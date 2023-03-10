@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.domain.broadcast
+package com.esfimus.gbweather.ui.broadcast
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -7,7 +7,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.WEATHER_BROADCAST_INTENT
 import com.esfimus.gbweather.databinding.ActivityMainBinding
-import com.esfimus.gbweather.domain.broadcast.MyReceiver
+import com.esfimus.gbweather.ui.broadcast.MyReceiver
 
 class MainActivity : AppCompatActivity() {
 
