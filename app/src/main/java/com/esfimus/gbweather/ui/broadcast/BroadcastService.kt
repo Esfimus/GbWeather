@@ -31,7 +31,7 @@ class BroadcastService : Service() {
             override fun loaded(weather: WeatherPresenter) {
                 sendBroadcast("""
                     ${weather.location.name}
-                    ${weather.currentTimeView}
+                    ${weather.currentTimeFormatted}
                 """.trimIndent())
             }
             override fun failed(responseCode: Int) {

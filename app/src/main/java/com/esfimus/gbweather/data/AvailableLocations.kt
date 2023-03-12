@@ -2,7 +2,7 @@ package com.esfimus.gbweather.data
 
 import com.esfimus.gbweather.domain.Location
 
-class Repository {
+class AvailableLocations {
 
     private val availableLocations = listOf(
         Location("MOSCOW", 55.735069, 37.406704),

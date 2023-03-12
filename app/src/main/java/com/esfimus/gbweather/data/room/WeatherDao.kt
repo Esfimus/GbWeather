@@ -8,6 +8,9 @@ interface WeatherDao {
     @Query("SELECT * FROM WeatherEntity")
     fun getAllWeatherItems(): LiveData<List<WeatherEntity>>
 
+    @Query("SELECT COUNT(location_name) FROM WeatherEntity")
+    suspend fun itemsCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: WeatherEntity)
 

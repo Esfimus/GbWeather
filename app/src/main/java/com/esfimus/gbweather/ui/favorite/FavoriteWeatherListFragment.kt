@@ -1,20 +1,21 @@
 package com.esfimus.gbweather.ui.favorite
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esfimus.gbweather.R
+import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.add.AddWeatherLocationFragment
 import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
 import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
-import com.esfimus.gbweather.ui.add.AddWeatherLocationFragment
 
 class FavoriteWeatherListFragment : Fragment() {
 
@@ -22,6 +23,9 @@ class FavoriteWeatherListFragment : Fragment() {
     private val ui get() = _ui!!
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
+    private val weatherViewModel: WeatherViewModel by lazy {
+        ViewModelProvider(this)[WeatherViewModel::class.java]
+    }
 
     companion object {
         fun newInstance() = FavoriteWeatherListFragment()
@@ -39,8 +43,8 @@ class FavoriteWeatherListFragment : Fragment() {
     }
 
     private fun initDynamicList() {
-        context?.let { model.load(it) }
-        model.weatherPresenterListLive.observe(viewLifecycleOwner) {
+//        context?.let { model.load(it) }
+        weatherViewModel.weatherList.observe(viewLifecycleOwner) {
             val customAdapter = RecyclerAdapter(it)
             ui.weatherRecycler.apply {
                 layoutManager = LinearLayoutManager(context)
@@ -72,7 +76,7 @@ class FavoriteWeatherListFragment : Fragment() {
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.delete_popup -> {
-                        model.deleteWeatherLocation(position)
+                        weatherViewModel.deleteByPosition(position)
                         true
                     }
                     else -> false

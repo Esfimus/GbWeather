@@ -8,6 +8,9 @@ class WeatherRepository(private val weatherDao: WeatherDao) {
     val allWeatherItems: LiveData<List<WeatherEntity>> = weatherDao.getAllWeatherItems()
 
     @WorkerThread
+    suspend fun itemsCount() = weatherDao.itemsCount()
+
+    @WorkerThread
     suspend fun insertWeather(weather: WeatherEntity) {
         weatherDao.insert(weather)
     }

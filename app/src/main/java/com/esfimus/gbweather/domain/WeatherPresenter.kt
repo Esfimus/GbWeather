@@ -8,20 +8,20 @@ data class WeatherPresenter(
     val location: Location,
     val weatherLoaded: WeatherLoaded? = null
     ) {
-    val currentTimeView = currentDateAndTime()
-    var temperatureView = ""
-    var feelsLikeView = ""
-    var humidityView = ""
-    var windView = ""
-    var pressureView = ""
+    val currentTimeFormatted = currentDateAndTime()
+    var temperatureFormatted = ""
+    var feelsLikeFormatted = ""
+    var humidityFormatted = ""
+    var windFormatted = ""
+    var pressureFormatted = ""
 
     init {
         if (weatherLoaded != null) {
-            temperatureView = "${weatherLoaded.fact.temp}°"
-            feelsLikeView = "Feels like ${weatherLoaded.fact.feelsLike}°"
-            humidityView = "Humidity ${weatherLoaded.fact.humidity}%"
-            windView = "Wind ${weatherLoaded.fact.windSpeed} m/s ${weatherLoaded.fact.windDir.uppercase()}"
-            pressureView = "Pressure ${weatherLoaded.fact.pressureMm} mmHg"
+            temperatureFormatted = "${weatherLoaded.fact.temp}°"
+            feelsLikeFormatted = "Feels like ${weatherLoaded.fact.feelsLike}°"
+            humidityFormatted = "Humidity ${weatherLoaded.fact.humidity}%"
+            windFormatted = "Wind ${weatherLoaded.fact.windSpeed} m/s ${weatherLoaded.fact.windDir.uppercase()}"
+            pressureFormatted = "Pressure ${weatherLoaded.fact.pressureMm} mmHg"
         }
     }
 }

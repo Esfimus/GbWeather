@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.esfimus.gbweather.R
-import com.esfimus.gbweather.domain.WeatherPresenter
+import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.databinding.RecyclerviewItemBinding
 import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
 import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
 
-class RecyclerAdapter(private val itemsList: List<WeatherPresenter>) :
+class RecyclerAdapter(private val itemsList: List<WeatherEntity>) :
     RecyclerView.Adapter<RecyclerAdapter.CustomViewHolder>() {
 
     private var itemCLickListener: OnListItemCLick? = null
@@ -19,10 +19,10 @@ class RecyclerAdapter(private val itemsList: List<WeatherPresenter>) :
 
     inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = RecyclerviewItemBinding.bind(itemView)
-        fun bind(favouriteLocation: WeatherPresenter) {
+        fun bind(favouriteLocation: WeatherEntity) {
             with (binding) {
-                cardLocationName.text = favouriteLocation.location.name
-                cardTemperature.text = favouriteLocation.temperatureView
+                cardLocationName.text = favouriteLocation.locationName
+                cardTemperature.text = favouriteLocation.temperature
             }
         }
 
