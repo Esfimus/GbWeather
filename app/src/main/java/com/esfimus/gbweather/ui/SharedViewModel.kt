@@ -154,7 +154,7 @@ class SharedViewModel : ViewModel() {
             val validLocation = repositoryData.getLocation(requestLocation)!!
             locationsList.addWeather(WeatherPresenter(validLocation))
             selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-            updateWeatherRetrofit(validLocation, selectedWeatherIndex)
+            updateWeatherImitation(validLocation, selectedWeatherIndex)
             weatherPresenterListLive.value = locationsList.favoriteWeatherList
             save()
             "ok"
@@ -188,7 +188,7 @@ class SharedViewModel : ViewModel() {
      * Updates current selected weather view
      */
     fun updateSelectedWeather() {
-        updateWeatherRetrofit(locationsList.favoriteWeatherList[selectedWeatherIndex].location, selectedWeatherIndex)
+        updateWeatherImitation(locationsList.favoriteWeatherList[selectedWeatherIndex].location, selectedWeatherIndex)
     }
 
     /**
