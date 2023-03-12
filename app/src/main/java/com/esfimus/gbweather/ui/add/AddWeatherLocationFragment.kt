@@ -18,9 +18,10 @@ class AddWeatherLocationFragment : Fragment() {
 
     private var _ui: FragmentAddWeatherLocationBinding? = null
     private val ui get() = _ui!!
+    private val model: SharedViewModel by lazy {
+        ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
     private val weatherViewModel: WeatherViewModel by lazy {
-        ViewModelProvider(this)[WeatherViewModel::class.java]
-    }
+        ViewModelProvider(this)[WeatherViewModel::class.java] }
 
     companion object {
         fun newInstance() = AddWeatherLocationFragment()
@@ -39,14 +40,14 @@ class AddWeatherLocationFragment : Fragment() {
 
     private fun initAction() {
         val searchView: TextView = ui.searchLocationText
-        val model: SharedViewModel by lazy { ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
         ui.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
-            when (model.addWeatherLocation(searchView.text.toString())) {
-                "ok" -> requireActivity().supportFragmentManager.popBackStack()
-                "null" -> view?.snackMessage("Location is not available")
-                "in list" -> view?.snackMessage("Location is already favorite")
-                else -> view?.snackMessage("Location is not found")
+            if (model.locationIsAvailable(searchView.text.toString())) {
+                val currentWeather = model.getWeatherImitation(searchView.text.toString())
+                weatherViewModel.addWeather(currentWeather)
+                requireActivity().supportFragmentManager.popBackStack()
+            } else {
+                view?.snackMessage("Location is not found")
             }
         }
     }

@@ -31,14 +31,4 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     fun deleteByPosition(position: Int) {
         deleteWeather(weatherList.value?.get(position) ?: WeatherEntity())
     }
-
-    fun itemsCount(): Int {
-        var check = -1
-        viewModelScope.launch {
-            val count =  repository.itemsCount()
-            check = count
-        }
-        return check
-    }
-
 }

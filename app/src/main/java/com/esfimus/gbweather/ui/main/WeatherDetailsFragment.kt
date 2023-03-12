@@ -35,8 +35,7 @@ class WeatherDetailsFragment : Fragment() {
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
     private val weatherViewModel: WeatherViewModel by lazy {
-        ViewModelProvider(this)[WeatherViewModel::class.java]
-    }
+        ViewModelProvider(this)[WeatherViewModel::class.java] }
     var counter = 0
     var listItems = 0
 

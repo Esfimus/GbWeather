@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.esfimus.gbweather.data.AvailableLocations
+import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.domain.WeatherPresenter
 import com.esfimus.gbweather.domain.api.*
@@ -38,8 +39,25 @@ class SharedViewModel : ViewModel() {
     /**
      * Imitates weather update to test app functionality
      */
-    private fun updateWeatherImitation(location: Location, position: Int) {
-        val weather = WeatherPresenter(location, WeatherLoaded(
+//    private fun updateWeatherImitation(location: Location, position: Int) {
+//        val weather = WeatherPresenter(location, WeatherLoaded(
+//            WeatherFact("condition", "daytime", Random.nextInt(-30,30),
+//                Random.nextInt(10,100), "icon", Random.nextInt(0, 10),
+//                true, Random.nextInt(735,745), Random.nextInt(100,200),
+//                "season", Random.nextInt(-30,30), "wind", 0.0, 0.0),
+//            WeatherForecast("date", 0, 0, "moon", listOf(), "sunrise", "sunset", 0),
+//            WeatherInfo(location.lat, location.lon, "url"),
+//            0,
+//            "nowDt")
+//        )
+//        locationsList.favoriteWeatherList[position] = weather
+//        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
+//        save()
+//    }
+
+    fun getWeatherImitation(requestLocation: String): WeatherEntity {
+        val location = availableLocationsData.getLocation(requestLocation) ?: Location("", 0.0, 0.0)
+        val weatherPresenter = WeatherPresenter(location, WeatherLoaded(
             WeatherFact("condition", "daytime", Random.nextInt(-30,30),
                 Random.nextInt(10,100), "icon", Random.nextInt(0, 10),
                 true, Random.nextInt(735,745), Random.nextInt(100,200),
@@ -49,9 +67,17 @@ class SharedViewModel : ViewModel() {
             0,
             "nowDt")
         )
-//        locationsList.favoriteWeatherList[position] = weather
-//        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
-//        save()
+        return WeatherEntity(
+            weatherPresenter.location.name,
+            weatherPresenter.location.lat.toString(),
+            weatherPresenter.location.lon.toString(),
+            weatherPresenter.currentTimeFormatted,
+            weatherPresenter.temperatureFormatted,
+            weatherPresenter.feelsLikeFormatted,
+            weatherPresenter.humidityFormatted,
+            weatherPresenter.windFormatted,
+            weatherPresenter.pressureFormatted
+        )
     }
 
     /**
@@ -150,7 +176,7 @@ class SharedViewModel : ViewModel() {
             val validLocation = availableLocationsData.getLocation(requestLocation)!!
 //            locationsList.addWeather(WeatherPresenter(validLocation))
 //            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-            updateWeatherImitation(validLocation, selectedWeatherIndex)
+//            updateWeatherImitation(validLocation, selectedWeatherIndex)
 //            weatherPresenterListLive.value = locationsList.favoriteWeatherList
 //            save()
             "ok"
@@ -191,7 +217,12 @@ class SharedViewModel : ViewModel() {
      * Checks if requested location name is valid and not in favorite list
      */
     private fun checkLocation(requestLocation: String): Boolean {
-        return (availableLocationsData.getLocation(requestLocation) != null && !locationIsFavorite(requestLocation))
+        return (availableLocationsData.getLocation(requestLocation) != null
+                && !locationIsFavorite(requestLocation))
+    }
+
+    fun locationIsAvailable(requestLocation: String): Boolean {
+        return availableLocationsData.getLocation(requestLocation) != null
     }
 
     /**

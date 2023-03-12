@@ -24,8 +24,7 @@ class FavoriteWeatherListFragment : Fragment() {
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
     private val weatherViewModel: WeatherViewModel by lazy {
-        ViewModelProvider(this)[WeatherViewModel::class.java]
-    }
+        ViewModelProvider(this)[WeatherViewModel::class.java] }
 
     companion object {
         fun newInstance() = FavoriteWeatherListFragment()
@@ -43,7 +42,6 @@ class FavoriteWeatherListFragment : Fragment() {
     }
 
     private fun initDynamicList() {
-//        context?.let { model.load(it) }
         weatherViewModel.weatherList.observe(viewLifecycleOwner) {
             val customAdapter = RecyclerAdapter(it)
             ui.weatherRecycler.apply {
@@ -53,7 +51,7 @@ class FavoriteWeatherListFragment : Fragment() {
             // reaction on item click
             customAdapter.setListItemClickListener(object : OnListItemCLick {
                 override fun onClick(position: Int) {
-                    model.switchWeatherLocation(position)
+//                    model.switchWeatherLocation(position)
                     requireActivity().supportFragmentManager.popBackStack()
                 }
             })
