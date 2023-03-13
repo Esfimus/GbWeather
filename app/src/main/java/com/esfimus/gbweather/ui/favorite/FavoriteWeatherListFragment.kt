@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esfimus.gbweather.R
+import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.ui.SharedViewModel
@@ -43,6 +44,7 @@ class FavoriteWeatherListFragment : Fragment() {
 
     private fun initDynamicList() {
         weatherViewModel.weatherList.observe(viewLifecycleOwner) {
+            model.numberOfItems = it.size
             val customAdapter = RecyclerAdapter(it)
             ui.weatherRecycler.apply {
                 layoutManager = LinearLayoutManager(context)
@@ -51,14 +53,15 @@ class FavoriteWeatherListFragment : Fragment() {
             // reaction on item click
             customAdapter.setListItemClickListener(object : OnListItemCLick {
                 override fun onClick(position: Int) {
-//                    model.switchWeatherLocation(position)
+//                    model.setSelectedWeatherIndex(position)
+                    model.setCurrentWeather(it[position])
                     requireActivity().supportFragmentManager.popBackStack()
                 }
             })
             // reaction on item long click
             customAdapter.setListItemLongClickListener(object : OnListItemLongClick {
                 override fun onLongCLick(position: Int, itemView: View) {
-                    popupMenu(position, itemView)
+                    popupMenu(position, itemView, it)
                 }
             })
         }
@@ -67,7 +70,7 @@ class FavoriteWeatherListFragment : Fragment() {
         }
     }
 
-    private fun popupMenu(position: Int, itemView: View) {
+    private fun popupMenu(position: Int, itemView: View, weatherList: List<WeatherEntity>) {
         PopupMenu(context, itemView).apply {
             inflate(R.menu.popup_menu)
             show()
@@ -75,6 +78,10 @@ class FavoriteWeatherListFragment : Fragment() {
                 when (it.itemId) {
                     R.id.delete_popup -> {
                         weatherViewModel.deleteByPosition(position)
+//                        if (model.getSelectedWeatherIndex() == position) {
+//                            model.setSelectedWeatherIndex(position - 1)
+//                        }
+
                         true
                     }
                     else -> false

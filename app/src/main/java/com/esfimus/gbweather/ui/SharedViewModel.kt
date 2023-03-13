@@ -23,7 +23,7 @@ private const val SELECTED_WEATHER_INDEX = "selected weather index"
 class SharedViewModel : ViewModel() {
 
     // available for view
-//    val selectedWeatherLive: MutableLiveData<WeatherPresenter> = MutableLiveData()
+    val selectedWeatherLive: MutableLiveData<WeatherEntity> = MutableLiveData()
 //    val weatherPresenterListLive: MutableLiveData<List<WeatherPresenter>> = MutableLiveData()
     val responseFailureLive: MutableLiveData<String> = MutableLiveData()
 
@@ -31,15 +31,33 @@ class SharedViewModel : ViewModel() {
     private val availableLocationsData = AvailableLocations()
 //    private var locationsList = FavoriteWeather()
     private var selectedWeatherIndex = 0
+    var numberOfItems = 0
 
     // saving parameters
 //    private var saveList: SharedPreferences? = null
     private var saveIndex: SharedPreferences? = null
 
+    fun getSelectedWeatherIndex() = selectedWeatherIndex
+
+    fun setSelectedWeatherIndex(position: Int) {
+        selectedWeatherIndex = if (numberOfItems in 1..position) {
+            numberOfItems - 1
+        } else if (numberOfItems <= 0 || position < 0) {
+            0
+        } else {
+            position
+        }
+        save()
+    }
+
+    fun setCurrentWeather(weather: WeatherEntity) {
+        selectedWeatherLive.value = weather
+    }
+
     /**
      * Imitates weather update to test app functionality
      */
-//    private fun updateWeatherImitation(location: Location, position: Int) {
+    private fun updateWeatherImitation(location: Location, position: Int) {
 //        val weather = WeatherPresenter(location, WeatherLoaded(
 //            WeatherFact("condition", "daytime", Random.nextInt(-30,30),
 //                Random.nextInt(10,100), "icon", Random.nextInt(0, 10),
@@ -53,7 +71,7 @@ class SharedViewModel : ViewModel() {
 //        locationsList.favoriteWeatherList[position] = weather
 //        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
 //        save()
-//    }
+    }
 
     fun getWeatherImitation(requestLocation: String): WeatherEntity {
         val location = availableLocationsData.getLocation(requestLocation) ?: Location("", 0.0, 0.0)
@@ -76,7 +94,7 @@ class SharedViewModel : ViewModel() {
             weatherPresenter.feelsLikeFormatted,
             weatherPresenter.humidityFormatted,
             weatherPresenter.windFormatted,
-            weatherPresenter.pressureFormatted
+            weatherPresenter.pressureFormatted,
         )
     }
 
@@ -131,8 +149,6 @@ class SharedViewModel : ViewModel() {
      * Saves whole list of favorite locations and index of selected location
      */
     private fun save() {
-//        val locationListJson = GsonBuilder().create().toJson(locationsList)
-//        saveList?.edit()?.putString(LOCATION_LIST, locationListJson)?.apply()
         saveIndex?.edit()?.putInt(SELECTED_WEATHER_INDEX, selectedWeatherIndex)?.apply()
     }
 
@@ -140,20 +156,10 @@ class SharedViewModel : ViewModel() {
      * Loads list of favorite locations and index of selected location
      */
     fun load(context: Context) {
-//        saveList = context.getSharedPreferences(PREFERENCE_LIST, Context.MODE_PRIVATE)
         saveIndex = context.getSharedPreferences(PREFERENCE_INDEX, Context.MODE_PRIVATE)
-//        val retrievedList = saveList?.getString(LOCATION_LIST, null)
         val retrievedWeatherIndex = saveIndex?.getInt(SELECTED_WEATHER_INDEX, 0)
-//        if (retrievedList != null) {
-//            val type: Type = object : TypeToken<FavoriteWeather>() {}.type
-//            locationsList = GsonBuilder().create().fromJson(retrievedList, type)
-//            weatherPresenterListLive.value = locationsList.favoriteWeatherList
-//        }
         if (retrievedWeatherIndex != null) {
             selectedWeatherIndex = retrievedWeatherIndex
-//            if (selectedWeatherIndex in 0 until locationsList.favoriteWeatherList.size) {
-//                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
-//            }
         }
     }
 
@@ -165,6 +171,8 @@ class SharedViewModel : ViewModel() {
 //        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
 //        save()
     }
+
+    fun getCurrentWeatherPosition() = selectedWeatherIndex
 
     /**
      * Checks if location is valid and it is already in favorite list,

@@ -17,16 +17,9 @@ import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
-import com.esfimus.gbweather.domain.Location
-import com.esfimus.gbweather.domain.WeatherPresenter
-import com.esfimus.gbweather.domain.api.WeatherFact
-import com.esfimus.gbweather.domain.api.WeatherForecast
-import com.esfimus.gbweather.domain.api.WeatherInfo
-import com.esfimus.gbweather.domain.api.WeatherLoaded
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
-import kotlin.random.Random
 
 class WeatherDetailsFragment : Fragment() {
 
@@ -36,8 +29,6 @@ class WeatherDetailsFragment : Fragment() {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
     private val weatherViewModel: WeatherViewModel by lazy {
         ViewModelProvider(this)[WeatherViewModel::class.java] }
-    var counter = 0
-    var listItems = 0
 
     companion object {
         fun newInstance() = WeatherDetailsFragment()
@@ -51,21 +42,30 @@ class WeatherDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initAction()
+        initView()
         startBroadcastService()
     }
 
-    private fun initAction() {
+    private fun initView() {
+        context?.let { model.load(it) }
         val weatherIcon: ImageView = ui.weatherIcon
         weatherIcon.load(weather_icon_link)
-        weatherViewModel.weatherList.observe(viewLifecycleOwner) {
-            listItems = it.size
-        }
-//        context?.let { model.load(it) }
-//        listenWeatherList()
-        ui.updateWeather.setOnClickListener {
-            refreshWeather()
-//            listenWeatherList()
+        model.selectedWeatherLive.observe(viewLifecycleOwner) { w ->
+            with (ui) {
+                textFieldLocation.text = w.locationName
+                textFieldLatitude.text = w.locationLat
+                textFieldLongitude.text = w.locationLon
+                textFieldTemperature.text = w.temperature
+                textFieldFeelsLike.text = w.feelsLike
+                textFieldHumidity.text = w.humidity
+                textFieldWind.text = w.wind
+                textFieldPressure.text = w.pressure
+                currentTime.text = w.currentTime
+            }
+
+            ui.updateWeather.setOnClickListener {
+                refreshWeather(w)
+            }
         }
         ui.locationList.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
@@ -78,7 +78,7 @@ class WeatherDetailsFragment : Fragment() {
 //            location = it.location
 //        }
         ui.updateWeatherBroadcast.setOnClickListener {
-            updateThisWeather()
+//            updateThisWeather()
 //            context?.let {
 //                it.startService(Intent(it, BroadcastService::class.java).apply {
 //                    putExtra(WEATHER_LOCATION_EXTRA, location)
@@ -121,51 +121,13 @@ class WeatherDetailsFragment : Fragment() {
         imageLoader.enqueue(request)
     }
 
-    private fun refreshWeather() {
-//        Toast.makeText(context, "items: $listItems", Toast.LENGTH_SHORT).show()
-        if (listItems > 0) {
-//            updateThisWeather()
+    private fun refreshWeather(weather: WeatherEntity) {
+        if (model.numberOfItems > 0) {
+            val currentWeather = model.getWeatherImitation(weather.locationName)
+            weatherViewModel.updateWeather(currentWeather)
+            model.setCurrentWeather(currentWeather)
         } else {
             view?.snackMessage("Please, select location")
-        }
-    }
-
-    private fun updateThisWeather() {
-        val location = Location("$counter", (counter.toDouble() + 1) * 3.5847, (counter.toDouble() + 1) * 4.57936)
-        counter++
-        val weather = WeatherPresenter(location, WeatherLoaded(
-            WeatherFact("condition", "daytime", Random.nextInt(-30,30),
-                Random.nextInt(10,100), "icon", Random.nextInt(0, 10),
-                true, Random.nextInt(735,745), Random.nextInt(100,200),
-                "season", Random.nextInt(-30,30), "wind", 0.0, 0.0),
-            WeatherForecast("date", 0, 0, "moon", listOf(), "sunrise", "sunset", 0),
-            WeatherInfo(location.lat, location.lon, "url"),
-            0,
-            "nowDt")
-        )
-        val weatherEntity = WeatherEntity(
-            weather.location.name,
-            weather.location.lat.toString(),
-            weather.location.lon.toString(),
-            weather.currentTimeFormatted,
-            weather.temperatureFormatted,
-            weather.feelsLikeFormatted,
-            weather.humidityFormatted,
-            weather.windFormatted,
-            weather.pressureFormatted
-        )
-        weatherViewModel.addWeather(weatherEntity)
-
-        with (ui) {
-            textFieldLocation.text = weatherEntity.locationName
-            textFieldLatitude.text = weatherEntity.locationLat
-            textFieldLongitude.text = weatherEntity.locationLon
-            textFieldTemperature.text = weatherEntity.temperature
-            textFieldFeelsLike.text = weatherEntity.feelsLike
-            textFieldHumidity.text = weatherEntity.humidity
-            textFieldWind.text = weatherEntity.wind
-            textFieldPressure.text = weatherEntity.pressure
-            currentTime.text = weatherEntity.currentTime
         }
     }
 

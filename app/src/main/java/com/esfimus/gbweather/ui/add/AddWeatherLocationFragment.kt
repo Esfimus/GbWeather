@@ -44,7 +44,10 @@ class AddWeatherLocationFragment : Fragment() {
             view?.hideKeyboard()
             if (model.locationIsAvailable(searchView.text.toString())) {
                 val currentWeather = model.getWeatherImitation(searchView.text.toString())
+//                model.numberOfItems++
+//                model.setSelectedWeatherIndex(model.numberOfItems - 1)
                 weatherViewModel.addWeather(currentWeather)
+                model.setCurrentWeather(currentWeather)
                 requireActivity().supportFragmentManager.popBackStack()
             } else {
                 view?.snackMessage("Location is not found")
