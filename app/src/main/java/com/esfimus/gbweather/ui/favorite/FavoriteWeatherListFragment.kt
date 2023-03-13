@@ -53,7 +53,7 @@ class FavoriteWeatherListFragment : Fragment() {
             // reaction on item click
             customAdapter.setListItemClickListener(object : OnListItemCLick {
                 override fun onClick(position: Int) {
-//                    model.setSelectedWeatherIndex(position)
+                    model.setSelectedWeatherIndex(position)
                     model.setCurrentWeather(it[position])
                     requireActivity().supportFragmentManager.popBackStack()
                 }
@@ -78,10 +78,7 @@ class FavoriteWeatherListFragment : Fragment() {
                 when (it.itemId) {
                     R.id.delete_popup -> {
                         weatherViewModel.deleteByPosition(position)
-//                        if (model.getSelectedWeatherIndex() == position) {
-//                            model.setSelectedWeatherIndex(position - 1)
-//                        }
-
+                        model.setWeatherFromList(weatherList, position)
                         true
                     }
                     else -> false

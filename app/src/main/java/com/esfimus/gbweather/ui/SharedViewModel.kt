@@ -59,6 +59,28 @@ class SharedViewModel : ViewModel() {
     }
 
     /**
+     * Sets current weather and selected item index if selected weather is deleted
+     */
+    fun setWeatherFromList(weatherList: List<WeatherEntity>, position: Int) {
+        try {
+            if (position == selectedWeatherIndex) {
+                // selecting previous in list location if last weather location is selected and deleted
+                if (position == weatherList.size - 1) {
+                    selectedWeatherLive.value = weatherList[weatherList.size - 2]
+                    selectedWeatherIndex = weatherList.size - 2
+                // selecting next in list location if selected location is not last but is deleted
+                } else {
+                    selectedWeatherLive.value = weatherList[position + 1]
+                }
+            }
+        } catch(e: Exception) {
+            // clearing fields when all weather locations were deleted
+            selectedWeatherLive.value = WeatherEntity()
+        }
+        save()
+    }
+
+    /**
      * Imitates weather update to test app functionality
      */
     private fun updateWeatherImitation(location: Location, position: Int) {
@@ -76,6 +98,8 @@ class SharedViewModel : ViewModel() {
 //        selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
 //        save()
     }
+
+    fun getEmptyWeather() = WeatherEntity()
 
     fun getWeatherImitation(requestLocation: String): WeatherEntity {
         val location = availableLocationsData.getLocation(requestLocation) ?: Location("", 0.0, 0.0)
