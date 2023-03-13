@@ -10,14 +10,17 @@ import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.domain.WeatherPresenter
 import com.esfimus.gbweather.domain.api.*
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Type
 import kotlin.random.Random
 
-private const val PREFERENCE_LIST = "preference list"
+private const val PREFERENCE_WEATHER = "preference list"
 private const val PREFERENCE_INDEX = "preference index"
-private const val LOCATION_LIST = "location list"
+private const val CURRENT_WEATHER = "location list"
 private const val SELECTED_WEATHER_INDEX = "selected weather index"
 
 class SharedViewModel : ViewModel() {
@@ -34,7 +37,7 @@ class SharedViewModel : ViewModel() {
     var numberOfItems = 0
 
     // saving parameters
-//    private var saveList: SharedPreferences? = null
+    private var saveWeather: SharedPreferences? = null
     private var saveIndex: SharedPreferences? = null
 
     fun getSelectedWeatherIndex() = selectedWeatherIndex
@@ -52,6 +55,7 @@ class SharedViewModel : ViewModel() {
 
     fun setCurrentWeather(weather: WeatherEntity) {
         selectedWeatherLive.value = weather
+        save()
     }
 
     /**
@@ -149,6 +153,8 @@ class SharedViewModel : ViewModel() {
      * Saves whole list of favorite locations and index of selected location
      */
     private fun save() {
+        val currentWeatherJson = GsonBuilder().create().toJson(selectedWeatherLive.value)
+        saveWeather?.edit()?.putString(CURRENT_WEATHER, currentWeatherJson)?.apply()
         saveIndex?.edit()?.putInt(SELECTED_WEATHER_INDEX, selectedWeatherIndex)?.apply()
     }
 
@@ -160,6 +166,12 @@ class SharedViewModel : ViewModel() {
         val retrievedWeatherIndex = saveIndex?.getInt(SELECTED_WEATHER_INDEX, 0)
         if (retrievedWeatherIndex != null) {
             selectedWeatherIndex = retrievedWeatherIndex
+        }
+        saveWeather = context.getSharedPreferences(PREFERENCE_WEATHER, Context.MODE_PRIVATE)
+        val retrievedWeather = saveWeather?.getString(CURRENT_WEATHER, null)
+        if (retrievedWeather != null) {
+            val type: Type = object : TypeToken<WeatherEntity>() {}.type
+            selectedWeatherLive.value = GsonBuilder().create().fromJson(retrievedWeather, type)
         }
     }
 
@@ -178,56 +190,56 @@ class SharedViewModel : ViewModel() {
      * Checks if location is valid and it is already in favorite list,
      * adds location and updates LiveData list and selected location index
      */
-    fun addWeatherLocation(requestLocation: String): String {
-        // location is valid and not in favorites list yet, permission to add location
-        return if (checkLocation(requestLocation)) {
-            val validLocation = availableLocationsData.getLocation(requestLocation)!!
-//            locationsList.addWeather(WeatherPresenter(validLocation))
-//            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-//            updateWeatherImitation(validLocation, selectedWeatherIndex)
-//            weatherPresenterListLive.value = locationsList.favoriteWeatherList
-//            save()
-            "ok"
-            // location is valid but already in favorites list, cannot be added
-        } else if (locationIsFavorite(requestLocation)) {
-            "in list"
-            // location is not valid, cannot be added
-        } else {
-            "not found"
-        }
-    }
+//    fun addWeatherLocation(requestLocation: String): String {
+//        // location is valid and not in favorites list yet, permission to add location
+//        return if (checkLocation(requestLocation)) {
+//            val validLocation = availableLocationsData.getLocation(requestLocation)!!
+////            locationsList.addWeather(WeatherPresenter(validLocation))
+////            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
+////            updateWeatherImitation(validLocation, selectedWeatherIndex)
+////            weatherPresenterListLive.value = locationsList.favoriteWeatherList
+////            save()
+//            "ok"
+//            // location is valid but already in favorites list, cannot be added
+//        } else if (locationIsFavorite(requestLocation)) {
+//            "in list"
+//            // location is not valid, cannot be added
+//        } else {
+//            "not found"
+//        }
+//    }
 
     /**
      * Deletes specified weather location
      */
-    fun deleteWeatherLocation(position: Int) {
-//        if (position in 0 until locationsList.favoriteWeatherList.size) {
-//            locationsList.deleteWeather(position)
-//            weatherPresenterListLive.value = locationsList.favoriteWeatherList
-//            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
-//            if (selectedWeatherIndex >= 0) {
-//                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
-//            } else {
-//                selectedWeatherLive.value = WeatherPresenter(Location("", 0.0, 0.0))
-//            }
-//            save()
-//        }
-    }
+//    fun deleteWeatherLocation(position: Int) {
+////        if (position in 0 until locationsList.favoriteWeatherList.size) {
+////            locationsList.deleteWeather(position)
+////            weatherPresenterListLive.value = locationsList.favoriteWeatherList
+////            selectedWeatherIndex = locationsList.favoriteWeatherList.size - 1
+////            if (selectedWeatherIndex >= 0) {
+////                selectedWeatherLive.value = locationsList.favoriteWeatherList[selectedWeatherIndex]
+////            } else {
+////                selectedWeatherLive.value = WeatherPresenter(Location("", 0.0, 0.0))
+////            }
+////            save()
+////        }
+//    }
 
     /**
      * Updates current selected weather view
      */
-    fun updateSelectedWeather() {
-//        updateWeatherImitation(locationsList.favoriteWeatherList[selectedWeatherIndex].location, selectedWeatherIndex)
-    }
+//    fun updateSelectedWeather() {
+////        updateWeatherImitation(locationsList.favoriteWeatherList[selectedWeatherIndex].location, selectedWeatherIndex)
+//    }
 
     /**
      * Checks if requested location name is valid and not in favorite list
      */
-    private fun checkLocation(requestLocation: String): Boolean {
-        return (availableLocationsData.getLocation(requestLocation) != null
-                && !locationIsFavorite(requestLocation))
-    }
+//    private fun checkLocation(requestLocation: String): Boolean {
+//        return (availableLocationsData.getLocation(requestLocation) != null
+//                && !locationIsFavorite(requestLocation))
+//    }
 
     fun locationIsAvailable(requestLocation: String): Boolean {
         return availableLocationsData.getLocation(requestLocation) != null
@@ -236,14 +248,14 @@ class SharedViewModel : ViewModel() {
     /**
      * Checks if favorite list contains requested location
      */
-    private fun locationIsFavorite(requestLocation: String): Boolean {
-//        for (favorites in locationsList.favoriteWeatherList) {
-//            if (favorites.location.name.lowercase() == requestLocation) {
-//                return true
-//            }
-//        }
-        return false
-    }
+//    private fun locationIsFavorite(requestLocation: String): Boolean {
+////        for (favorites in locationsList.favoriteWeatherList) {
+////            if (favorites.location.name.lowercase() == requestLocation) {
+////                return true
+////            }
+////        }
+//        return false
+//    }
 
     /**
      * Checks if favorite list is not empty
