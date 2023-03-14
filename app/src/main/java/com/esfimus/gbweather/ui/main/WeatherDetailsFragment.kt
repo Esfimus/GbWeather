@@ -1,5 +1,6 @@
 package com.esfimus.gbweather.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,14 @@ import coil.decode.SvgDecoder
 import coil.load
 import coil.request.ImageRequest
 import com.esfimus.gbweather.R
+import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
 import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
+import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.broadcast.BroadcastService
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
 
@@ -29,6 +33,7 @@ class WeatherDetailsFragment : Fragment() {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
     private val weatherViewModel: WeatherViewModel by lazy {
         ViewModelProvider(this)[WeatherViewModel::class.java] }
+    private lateinit var currentWeather: WeatherEntity
 
     companion object {
         fun newInstance() = WeatherDetailsFragment()
@@ -51,6 +56,7 @@ class WeatherDetailsFragment : Fragment() {
         val weatherIcon: ImageView = ui.weatherIcon
         weatherIcon.load(weather_icon_link)
         model.selectedWeatherLive.observe(viewLifecycleOwner) { w ->
+            currentWeather = w
             with (ui) {
                 textFieldLocation.text = w.locationName
                 textFieldLatitude.text = w.locationLat
@@ -61,11 +67,11 @@ class WeatherDetailsFragment : Fragment() {
                 textFieldWind.text = w.wind
                 textFieldPressure.text = w.pressure
                 currentTime.text = w.currentTime
+                currentWeatherIcon.loadSvg(w.iconLink)
             }
-
-            ui.updateWeather.setOnClickListener {
-                refreshWeather(w)
-            }
+        }
+        ui.updateWeather.setOnClickListener {
+                refreshWeather()
         }
         ui.locationList.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
@@ -73,39 +79,17 @@ class WeatherDetailsFragment : Fragment() {
     }
 
     private fun startBroadcastService() {
-//        var location: Location? = null
-//        model.selectedWeatherLive.observe(viewLifecycleOwner) {
-//            location = it.location
-//        }
-        ui.updateWeatherBroadcast.setOnClickListener {
-//            updateThisWeather()
-//            context?.let {
-//                it.startService(Intent(it, BroadcastService::class.java).apply {
-//                    putExtra(WEATHER_LOCATION_EXTRA, location)
-//                })
-//            }
+        var location: Location? = null
+        model.selectedWeatherLive.observe(viewLifecycleOwner) {
+            location = model.getLocation(it.locationName)
         }
-    }
-
-    private fun listenWeatherList() {
-//        val currentWeatherIcon: ImageView = ui.currentWeatherIcon
-//        model.selectedWeatherLive.observe(viewLifecycleOwner) {
-//            with (ui) {
-//                textFieldLocation.text = it.location.name
-//                textFieldLatitude.text = it.location.lat.toString()
-//                textFieldLongitude.text = it.location.lon.toString()
-//                textFieldTemperature.text = it.temperatureView
-//                textFieldFeelsLike.text = it.feelsLikeView
-//                textFieldHumidity.text = it.humidityView
-//                textFieldWind.text = it.windView
-//                textFieldPressure.text = it.pressureView
-//                currentTime.text = it.currentTimeView
-//                currentWeatherIcon.loadSvg("https://yastatic.net/weather/i/icons/funky/dark/${it.weatherLoaded?.fact?.icon}.svg")
-//            }
-//        }
-//        model.responseFailureLive.observe(viewLifecycleOwner) {
-//            view?.snackMessage(it.toString())
-//        }
+        ui.updateWeatherBroadcast.setOnClickListener {
+            context?.let {
+                it.startService(Intent(it, BroadcastService::class.java).apply {
+                    putExtra(WEATHER_LOCATION_EXTRA, location)
+                })
+            }
+        }
     }
 
     private fun ImageView.loadSvg(url: String) {
@@ -121,12 +105,15 @@ class WeatherDetailsFragment : Fragment() {
         imageLoader.enqueue(request)
     }
 
-    private fun refreshWeather(weather: WeatherEntity) {
-        if (model.numberOfItems > 0) {
-            val currentWeather = model.getWeatherImitation(weather.locationName)
-            weatherViewModel.updateWeather(currentWeather)
-            model.setCurrentWeather(currentWeather)
-        } else {
+    private fun refreshWeather() {
+        try {
+            if (currentWeather.locationName.isNotEmpty()) {
+                model.loadWeatherRetrofit(currentWeather.locationName)
+                weatherViewModel.updateWeather(currentWeather)
+            } else {
+                view?.snackMessage("Please, select location")
+            }
+        } catch (e: Exception) {
             view?.snackMessage("Please, select location")
         }
     }

@@ -14,6 +14,7 @@ data class WeatherPresenter(
     var humidityFormatted = ""
     var windFormatted = ""
     var pressureFormatted = ""
+    var iconLink = ""
 
     init {
         if (weatherLoaded != null) {
@@ -22,6 +23,7 @@ data class WeatherPresenter(
             humidityFormatted = "Humidity ${weatherLoaded.fact.humidity}%"
             windFormatted = "Wind ${weatherLoaded.fact.windSpeed} m/s ${weatherLoaded.fact.windDir.uppercase()}"
             pressureFormatted = "Pressure ${weatherLoaded.fact.pressureMm} mmHg"
+            iconLink = "https://yastatic.net/weather/i/icons/funky/dark/${weatherLoaded.fact.icon}.svg"
         }
     }
 }

@@ -15,6 +15,7 @@
         android:minHeight="@dimen/min_touch_size"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias=".3"
         android:hint="@string/enter_location"
         android:inputType="text"
         android:autofillHints="location" />

@@ -40,15 +40,21 @@ class AddWeatherLocationFragment : Fragment() {
 
     private fun initAction() {
         val searchView: TextView = ui.searchLocationText
+
         ui.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
             if (model.locationIsAvailable(searchView.text.toString())) {
-                val currentWeather = model.getWeatherImitation(searchView.text.toString())
-                model.numberOfItems++
-                model.setSelectedWeatherIndex(model.numberOfItems - 1)
-                weatherViewModel.addWeather(currentWeather)
-                model.setCurrentWeather(currentWeather)
-                requireActivity().supportFragmentManager.popBackStack()
+                model.loadWeatherRetrofit(searchView.text.toString())
+                model.selectedWeatherLive.observe(viewLifecycleOwner) { w ->
+                    if (model.locationIsAvailable(w.locationName)) {
+                        weatherViewModel.addWeather(w)
+                        weatherViewModel.weatherList.observe(viewLifecycleOwner) {
+                            model.numberOfItems = it.size
+                            model.setSelectedWeatherIndex(it.size - 1)
+                        }
+                        view?.snackMessage("${w.locationName} was added to favorites list")
+                    }
+                }
             } else {
                 view?.snackMessage("Location is not found")
             }

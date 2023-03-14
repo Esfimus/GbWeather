@@ -15,4 +15,5 @@ data class WeatherEntity (
     @ColumnInfo(name = "humidity") val humidity: String = "",
     @ColumnInfo(name = "wind") val wind: String = "",
     @ColumnInfo(name = "pressure") val pressure: String = "",
+    @ColumnInfo(name = "icon") val iconLink: String = "",
 )
