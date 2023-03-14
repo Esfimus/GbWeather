@@ -2,13 +2,14 @@ package com.esfimus.gbweather.ui.add
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.databinding.FragmentAddWeatherLocationBinding
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -17,6 +18,10 @@ class AddWeatherLocationFragment : Fragment() {
 
     private var _ui: FragmentAddWeatherLocationBinding? = null
     private val ui get() = _ui!!
+    private val model: SharedViewModel by lazy {
+        ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
+    private val weatherViewModel: WeatherViewModel by lazy {
+        ViewModelProvider(this)[WeatherViewModel::class.java] }
 
     companion object {
         fun newInstance() = AddWeatherLocationFragment()
@@ -35,14 +40,23 @@ class AddWeatherLocationFragment : Fragment() {
 
     private fun initAction() {
         val searchView: TextView = ui.searchLocationText
-        val model: SharedViewModel by lazy { ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
+
         ui.searchLocationButton.setOnClickListener {
             view?.hideKeyboard()
-            when (model.addWeatherLocation(searchView.text.toString())) {
-                "ok" -> requireActivity().supportFragmentManager.popBackStack()
-                "null" -> view?.snackMessage("Location is not available")
-                "in list" -> view?.snackMessage("Location is already favorite")
-                else -> view?.snackMessage("Location is not found")
+            if (model.locationIsAvailable(searchView.text.toString())) {
+                model.loadWeatherRetrofit(searchView.text.toString())
+                model.selectedWeatherLive.observe(viewLifecycleOwner) { w ->
+                    if (model.locationIsAvailable(w.locationName)) {
+                        weatherViewModel.addWeather(w)
+                        weatherViewModel.weatherList.observe(viewLifecycleOwner) {
+                            model.numberOfItems = it.size
+                            model.setSelectedWeatherIndex(it.size - 1)
+                        }
+                        view?.snackMessage("${w.locationName} was added to favorites list")
+                    }
+                }
+            } else {
+                view?.snackMessage("Location is not found")
             }
         }
     }

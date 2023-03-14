@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.domain.broadcast
+package com.esfimus.gbweather.ui.broadcast
 
 import android.app.Service
 import android.content.Intent
@@ -9,7 +9,7 @@ import com.esfimus.gbweather.data.WEATHER_BROADCAST_EXTRA
 import com.esfimus.gbweather.data.WEATHER_BROADCAST_INTENT
 import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
 import com.esfimus.gbweather.domain.Location
-import com.esfimus.gbweather.domain.WeatherView
+import com.esfimus.gbweather.domain.WeatherPresenter
 import com.esfimus.gbweather.domain.api.LoadWeather
 import com.esfimus.gbweather.domain.api.Loadable
 
@@ -28,10 +28,10 @@ class BroadcastService : Service() {
 
     private fun updateWeather(location: Location) {
         val loadableWeather: Loadable = object : Loadable {
-            override fun loaded(weather: WeatherView) {
+            override fun loaded(weather: WeatherPresenter) {
                 sendBroadcast("""
                     ${weather.location.name}
-                    ${weather.currentTimeView}
+                    ${weather.currentTimeFormatted}
                 """.trimIndent())
             }
             override fun failed(responseCode: Int) {

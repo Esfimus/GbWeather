@@ -2,12 +2,12 @@ package com.esfimus.gbweather.data
 
 import com.esfimus.gbweather.domain.Location
 
-class Repository {
+class AvailableLocations {
 
     private val availableLocations = listOf(
         Location("MOSCOW", 55.735069, 37.406704),
         Location("BEIJING", 39.901850, 116.391441),
-        Location("TOKIO", 35.681729, 139.753927),
+        Location("TOKYO", 35.681729, 139.753927),
         Location("NAIROBI", -1.272749, 36.827872),
         Location("NEW DELHI", 28.614243, 77.202788),
         Location("PRAGUE", 50.080345, 14.428974),

@@ -15,11 +15,13 @@ import coil.load
 import coil.request.ImageRequest
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
+import com.esfimus.gbweather.data.room.WeatherEntity
+import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.Location
-import com.esfimus.gbweather.domain.broadcast.BroadcastService
 import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.broadcast.BroadcastService
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
 
@@ -29,6 +31,9 @@ class WeatherDetailsFragment : Fragment() {
     private val ui get() = _ui!!
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
+    private val weatherViewModel: WeatherViewModel by lazy {
+        ViewModelProvider(this)[WeatherViewModel::class.java] }
+    private lateinit var currentWeather: WeatherEntity
 
     companion object {
         fun newInstance() = WeatherDetailsFragment()
@@ -42,16 +47,31 @@ class WeatherDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initAction()
+        initView()
         startBroadcastService()
     }
 
-    private fun initAction() {
+    private fun initView() {
         context?.let { model.load(it) }
-        listenWeatherList()
+        val weatherIcon: ImageView = ui.weatherIcon
+        weatherIcon.load(weather_icon_link)
+        model.selectedWeatherLive.observe(viewLifecycleOwner) { w ->
+            currentWeather = w
+            with (ui) {
+                textFieldLocation.text = w.locationName
+                textFieldLatitude.text = w.locationLat
+                textFieldLongitude.text = w.locationLon
+                textFieldTemperature.text = w.temperature
+                textFieldFeelsLike.text = w.feelsLike
+                textFieldHumidity.text = w.humidity
+                textFieldWind.text = w.wind
+                textFieldPressure.text = w.pressure
+                currentTime.text = w.currentTime
+                currentWeatherIcon.loadSvg(w.iconLink)
+            }
+        }
         ui.updateWeather.setOnClickListener {
-            refreshWeather()
-            listenWeatherList()
+                refreshWeather()
         }
         ui.locationList.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
@@ -61,7 +81,7 @@ class WeatherDetailsFragment : Fragment() {
     private fun startBroadcastService() {
         var location: Location? = null
         model.selectedWeatherLive.observe(viewLifecycleOwner) {
-            location = it.location
+            location = model.getLocation(it.locationName)
         }
         ui.updateWeatherBroadcast.setOnClickListener {
             context?.let {
@@ -69,29 +89,6 @@ class WeatherDetailsFragment : Fragment() {
                     putExtra(WEATHER_LOCATION_EXTRA, location)
                 })
             }
-        }
-    }
-
-    private fun listenWeatherList() {
-        val weatherIcon: ImageView = ui.weatherIcon
-        weatherIcon.load(weather_icon_link)
-        val currentWeatherIcon: ImageView = ui.currentWeatherIcon
-        model.selectedWeatherLive.observe(viewLifecycleOwner) {
-            with (ui) {
-                textFieldLocation.text = it.location.name
-                textFieldLatitude.text = it.location.lat.toString()
-                textFieldLongitude.text = it.location.lon.toString()
-                textFieldTemperature.text = it.temperatureView
-                textFieldFeelsLike.text = it.feelsLikeView
-                textFieldHumidity.text = it.humidityView
-                textFieldWind.text = it.windView
-                textFieldPressure.text = it.pressureView
-                currentTime.text = it.currentTimeView
-                currentWeatherIcon.loadSvg("https://yastatic.net/weather/i/icons/funky/dark/${it.weatherLoaded?.fact?.icon}.svg")
-            }
-        }
-        model.responseFailureLive.observe(viewLifecycleOwner) {
-            view?.snackMessage(it.toString())
         }
     }
 
@@ -109,9 +106,14 @@ class WeatherDetailsFragment : Fragment() {
     }
 
     private fun refreshWeather() {
-        if (model.favoritesAdded()) {
-            model.updateSelectedWeather()
-        } else {
+        try {
+            if (currentWeather.locationName.isNotEmpty()) {
+                model.loadWeatherRetrofit(currentWeather.locationName)
+                weatherViewModel.updateWeather(currentWeather)
+            } else {
+                view?.snackMessage("Please, select location")
+            }
+        } catch (e: Exception) {
             view?.snackMessage("Please, select location")
         }
     }

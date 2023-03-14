@@ -1,8 +1,8 @@
 package com.esfimus.gbweather.domain.api
 
-import com.esfimus.gbweather.domain.WeatherView
+import com.esfimus.gbweather.domain.WeatherPresenter
 
 interface Loadable {
-    fun loaded(weather: WeatherView)
+    fun loaded(weather: WeatherPresenter)
     fun failed(responseCode: Int)
 }

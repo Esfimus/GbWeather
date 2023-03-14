@@ -5,7 +5,7 @@ import android.os.Looper
 import android.util.Log
 import com.esfimus.gbweather.BuildConfig
 import com.esfimus.gbweather.domain.Location
-import com.esfimus.gbweather.domain.WeatherView
+import com.esfimus.gbweather.domain.WeatherPresenter
 import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -29,7 +29,7 @@ class LoadWeather(private val location: Location, private val loadable: Loadable
                     }
                     val buffer = BufferedReader(InputStreamReader(urlConnection.inputStream))
                     val weatherLoaded: WeatherLoaded = Gson().fromJson(buffer, WeatherLoaded::class.java)
-                    val weather = WeatherView(location, weatherLoaded)
+                    val weather = WeatherPresenter(location, weatherLoaded)
                     handler.post { loadable.loaded(weather) }
                 } catch (e: Exception) {
                     Log.e("@@@", "Connection failed ${urlConnection.responseCode}", e)

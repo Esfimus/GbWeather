@@ -1,20 +1,22 @@
 package com.esfimus.gbweather.ui.favorite
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esfimus.gbweather.R
+import com.esfimus.gbweather.data.room.WeatherEntity
+import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.ui.SharedViewModel
+import com.esfimus.gbweather.ui.add.AddWeatherLocationFragment
 import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
 import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
-import com.esfimus.gbweather.ui.add.AddWeatherLocationFragment
 
 class FavoriteWeatherListFragment : Fragment() {
 
@@ -22,6 +24,8 @@ class FavoriteWeatherListFragment : Fragment() {
     private val ui get() = _ui!!
     private val model: SharedViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java] }
+    private val weatherViewModel: WeatherViewModel by lazy {
+        ViewModelProvider(this)[WeatherViewModel::class.java] }
 
     companion object {
         fun newInstance() = FavoriteWeatherListFragment()
@@ -39,8 +43,8 @@ class FavoriteWeatherListFragment : Fragment() {
     }
 
     private fun initDynamicList() {
-        context?.let { model.load(it) }
-        model.weatherViewListLive.observe(viewLifecycleOwner) {
+        weatherViewModel.weatherList.observe(viewLifecycleOwner) {
+            model.numberOfItems = it.size
             val customAdapter = RecyclerAdapter(it)
             ui.weatherRecycler.apply {
                 layoutManager = LinearLayoutManager(context)
@@ -49,14 +53,15 @@ class FavoriteWeatherListFragment : Fragment() {
             // reaction on item click
             customAdapter.setListItemClickListener(object : OnListItemCLick {
                 override fun onClick(position: Int) {
-                    model.switchWeatherLocation(position)
+                    model.setSelectedWeatherIndex(position)
+                    model.setCurrentWeather(it[position])
                     requireActivity().supportFragmentManager.popBackStack()
                 }
             })
             // reaction on item long click
             customAdapter.setListItemLongClickListener(object : OnListItemLongClick {
                 override fun onLongCLick(position: Int, itemView: View) {
-                    popupMenu(position, itemView)
+                    popupMenu(position, itemView, it)
                 }
             })
         }
@@ -65,14 +70,15 @@ class FavoriteWeatherListFragment : Fragment() {
         }
     }
 
-    private fun popupMenu(position: Int, itemView: View) {
+    private fun popupMenu(position: Int, itemView: View, weatherList: List<WeatherEntity>) {
         PopupMenu(context, itemView).apply {
             inflate(R.menu.popup_menu)
             show()
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.delete_popup -> {
-                        model.deleteWeatherLocation(position)
+                        weatherViewModel.deleteByPosition(position)
+                        model.setWeatherFromList(weatherList, position)
                         true
                     }
                     else -> false
