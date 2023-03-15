@@ -165,4 +165,15 @@
         app:layout_constraintBottom_toTopOf="@id/update_weather"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/get_contacts_content_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/large_margin"
+        android:contentDescription="@string/contacts"
+        android:src="@drawable/baseline_contact_phone_24"
+        app:fabSize="auto"
+        app:layout_constraintBottom_toTopOf="@id/update_weather_broadcast"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

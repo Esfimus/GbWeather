@@ -22,6 +22,7 @@ import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.Location
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.broadcast.BroadcastService
+import com.esfimus.gbweather.ui.contentprovider.ContactsFragment
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.google.android.material.snackbar.Snackbar
 
@@ -71,10 +72,13 @@ class WeatherDetailsFragment : Fragment() {
             }
         }
         ui.updateWeather.setOnClickListener {
-                refreshWeather()
+            refreshWeather()
         }
         ui.locationList.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
+        }
+        ui.getContactsContentProvider.setOnClickListener {
+            openFragment(ContactsFragment.newInstance())
         }
     }
 
