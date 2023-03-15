@@ -16,4 +16,5 @@
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
     <string name="favourite_locations">Favourite locations</string>
+    <string name="contacts">Contacts</string>
 </resources>
