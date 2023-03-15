@@ -17,4 +17,9 @@
     <string name="longitude">Longitude</string>
     <string name="favourite_locations">Favourite locations</string>
     <string name="contacts">Contacts</string>
+    <string name="contacts_access_title">Contacts access required</string>
+    <string name="contacts_access_message">Access to this device contacts is needed for educational purposes</string>
+    <string name="contacts_access_yes">Allow access</string>
+    <string name="contacts_access_no">Deny access</string>
+    <string name="contacts_access_ok">OK</string>
 </resources>
