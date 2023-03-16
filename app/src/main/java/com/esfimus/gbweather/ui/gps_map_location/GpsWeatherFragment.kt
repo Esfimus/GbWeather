@@ -1,11 +1,17 @@
 package com.esfimus.gbweather.ui.gps_map_location
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.esfimus.gbweather.R
@@ -13,11 +19,26 @@ import com.esfimus.gbweather.databinding.FragmentGpsWeatherBinding
 import com.google.android.material.snackbar.Snackbar
 
 private const val REQUEST_CODE = 333
+private const val LOCATION_REFRESH_PERIOD = 60000L
+private const val LOCATION_DISTANCE = 1000f
 
 class GpsWeatherFragment : Fragment() {
 
     private var _ui: FragmentGpsWeatherBinding? = null
     private val ui get() = _ui!!
+    private val locationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            val latitude = location.latitude
+            val longitude = location.longitude
+            view?.snackMessage("Lat: $latitude Lon: $longitude")
+        }
+        override fun onProviderEnabled(provider: String) {
+            view?.snackMessage("Location is enabled")
+        }
+        override fun onProviderDisabled(provider: String) {
+            view?.snackMessage("Location is disabled")
+        }
+    }
 
     companion object {
         fun newInstance() = GpsWeatherFragment()
@@ -37,11 +58,11 @@ class GpsWeatherFragment : Fragment() {
     private fun checkPermission() {
         context?.let {
             when {
-                ContextCompat.checkSelfPermission(it, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                ContextCompat.checkSelfPermission(it, Manifest.permission.ACCESS_FINE_LOCATION) ==
                         PackageManager.PERMISSION_GRANTED -> {
                             getLocation()
                         }
-                shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                     explanationDialog(true)
                 }
                 else -> mRequestPermission()
@@ -50,7 +71,31 @@ class GpsWeatherFragment : Fragment() {
     }
 
     private fun getLocation() {
-        view?.snackMessage("Location")
+        context?.let {
+            val locationManager = it.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                @Suppress("deprecation")
+                val providerGps = locationManager.getProvider(LocationManager.GPS_PROVIDER)
+                providerGps?.let { _ ->
+                    if (ActivityCompat.checkSelfPermission(
+                            it,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            it,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        return
+                    }
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        LOCATION_REFRESH_PERIOD,
+                        LOCATION_DISTANCE,
+                        locationListener
+                    )
+                }
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -109,7 +154,7 @@ class GpsWeatherFragment : Fragment() {
 
     private fun mRequestPermission() {
         @Suppress("deprecation")
-        requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
+        requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
     }
 
     private fun View.snackMessage(text: String, length: Int = Snackbar.LENGTH_SHORT) {
