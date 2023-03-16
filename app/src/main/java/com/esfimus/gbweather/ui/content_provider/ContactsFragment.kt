@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentContactsBinding
 
-const val REQUEST_CODE = 555
+private const val REQUEST_CODE = 555
 
 class ContactsFragment : Fragment() {
 
@@ -45,21 +45,19 @@ class ContactsFragment : Fragment() {
                     getContacts()
                         }
                 shouldShowRequestPermissionRationale(android.Manifest.permission.READ_CONTACTS) -> {
-                    AlertDialog.Builder(context)
+                    AlertDialog.Builder(it)
                         .setTitle(getString(R.string.contacts_access_title))
                         .setMessage(getString(R.string.contacts_access_message))
-                        .setPositiveButton(getString(R.string.contacts_access_yes)) {
+                        .setPositiveButton(getString(R.string.access_yes)) {
                                 _, _ -> mRequestPermission() }
-                        .setNegativeButton(getString(R.string.contacts_access_no)) { dialog, _ ->
+                        .setNegativeButton(getString(R.string.access_no)) { dialog, _ ->
                             dialog.cancel()
                             requireActivity().supportFragmentManager.popBackStack()
                         }
                         .create()
                         .show()
                 }
-                else -> {
-                    mRequestPermission()
-                }
+                else -> mRequestPermission()
             }
         }
     }
@@ -107,10 +105,10 @@ class ContactsFragment : Fragment() {
                     getContacts()
                 } else {
                     context?.let {
-                        AlertDialog.Builder(context)
+                        AlertDialog.Builder(it)
                             .setTitle(getString(R.string.contacts_access_title))
                             .setMessage(getString(R.string.contacts_access_message))
-                            .setNegativeButton(getString(R.string.contacts_access_ok)) { dialog, _ ->
+                            .setNegativeButton(getString(R.string.access_ok)) { dialog, _ ->
                                 dialog.cancel()
                                 requireActivity().supportFragmentManager.popBackStack()
                             }

@@ -17,10 +17,14 @@
     <string name="longitude">Longitude</string>
     <string name="favourite_locations">Favourite locations</string>
     <string name="contacts">Contacts</string>
+    <string name="local_weather_by_gps">Local weather by GPS</string>
+
     <string name="contacts_access_title">Contacts access required</string>
     <string name="contacts_access_message">Access to this device contacts is needed for educational purposes</string>
-    <string name="contacts_access_yes">Allow access</string>
-    <string name="contacts_access_no">Deny access</string>
-    <string name="contacts_access_ok">OK</string>
-    <string name="local_weather_by_gps">Local weather by GPS</string>
+    <string name="location_access_title">Location access required</string>
+    <string name="location_access_message">Access to this device location is needed for the local weather update</string>
+    <string name="access_yes">Allow access</string>
+    <string name="access_no">Deny access</string>
+    <string name="access_ok">OK</string>
+
 </resources>
