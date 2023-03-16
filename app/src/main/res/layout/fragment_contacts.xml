@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".ui.contentprovider.ContactsFragment">
+    tools:context=".ui.content_provider.ContactsFragment">
 
     <LinearLayout
         android:id="@+id/contacts_container"

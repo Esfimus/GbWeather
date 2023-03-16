@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui.contentprovider
+package com.esfimus.gbweather.ui.content_provider
 
 import android.app.AlertDialog
 import android.content.ContentResolver

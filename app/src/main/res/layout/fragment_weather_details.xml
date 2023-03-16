@@ -128,12 +128,12 @@
         android:layout_margin="@dimen/small_margin"
         android:hint="@string/time"
         android:textSize="@dimen/small_text_size"
-        app:layout_constraintBottom_toBottomOf="@id/update_weather"
-        app:layout_constraintEnd_toStartOf="@id/update_weather"
-        app:layout_constraintTop_toTopOf="@id/update_weather" />
+        app:layout_constraintBottom_toBottomOf="@id/update_weather_fab"
+        app:layout_constraintEnd_toStartOf="@id/update_weather_fab"
+        app:layout_constraintTop_toTopOf="@id/update_weather_fab" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/update_weather"
+        android:id="@+id/update_weather_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/large_margin"
@@ -144,7 +144,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/location_list"
+        android:id="@+id/favorite_locations_list_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/large_margin"
@@ -155,25 +155,36 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/update_weather_broadcast"
+        android:id="@+id/update_weather_broadcast_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/large_margin"
         android:contentDescription="@string/update_weather"
         android:src="@drawable/baseline_radio_24"
         app:fabSize="auto"
-        app:layout_constraintBottom_toTopOf="@id/update_weather"
+        app:layout_constraintBottom_toTopOf="@id/update_weather_fab"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/get_contacts_content_provider"
+        android:id="@+id/get_contacts_content_provider_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/large_margin"
         android:contentDescription="@string/contacts"
         android:src="@drawable/baseline_contact_phone_24"
         app:fabSize="auto"
-        app:layout_constraintBottom_toTopOf="@id/update_weather_broadcast"
+        app:layout_constraintBottom_toTopOf="@id/update_weather_broadcast_fab"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/get_gps_weather_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/large_margin"
+        android:contentDescription="@string/local_weather_by_gps"
+        android:src="@drawable/baseline_my_location_24"
+        app:fabSize="auto"
+        app:layout_constraintBottom_toTopOf="@id/favorite_locations_list_fab"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

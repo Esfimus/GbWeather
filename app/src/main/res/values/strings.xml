@@ -22,4 +22,5 @@
     <string name="contacts_access_yes">Allow access</string>
     <string name="contacts_access_no">Deny access</string>
     <string name="contacts_access_ok">OK</string>
+    <string name="local_weather_by_gps">Local weather by GPS</string>
 </resources>

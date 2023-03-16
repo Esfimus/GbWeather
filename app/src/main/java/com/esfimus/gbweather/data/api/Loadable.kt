@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.domain.api
+package com.esfimus.gbweather.data.api
 
 import com.esfimus.gbweather.domain.WeatherPresenter
 
