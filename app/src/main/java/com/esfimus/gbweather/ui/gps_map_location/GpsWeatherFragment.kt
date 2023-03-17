@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -11,7 +12,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.esfimus.gbweather.R
@@ -19,8 +19,8 @@ import com.esfimus.gbweather.databinding.FragmentGpsWeatherBinding
 import com.google.android.material.snackbar.Snackbar
 
 private const val REQUEST_CODE = 333
-private const val LOCATION_REFRESH_PERIOD = 60000L
-private const val LOCATION_DISTANCE = 1000f
+private const val LOCATION_REFRESH_PERIOD = 3000L
+private const val LOCATION_DISTANCE = 100f
 
 class GpsWeatherFragment : Fragment() {
 
@@ -28,9 +28,7 @@ class GpsWeatherFragment : Fragment() {
     private val ui get() = _ui!!
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            val latitude = location.latitude
-            val longitude = location.longitude
-            view?.snackMessage("Lat: $latitude Lon: $longitude")
+            initView(location)
         }
         override fun onProviderEnabled(provider: String) {
             view?.snackMessage("Location is enabled")
@@ -71,31 +69,57 @@ class GpsWeatherFragment : Fragment() {
     }
 
     private fun getLocation() {
-        context?.let {
-            val locationManager = it.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                @Suppress("deprecation")
-                val providerGps = locationManager.getProvider(LocationManager.GPS_PROVIDER)
-                providerGps?.let { _ ->
-                    if (ActivityCompat.checkSelfPermission(
-                            it,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                            it,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        return
+        context?.let { context ->
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+                val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    @Suppress("deprecation")
+                    val providerGps = locationManager.getProvider(LocationManager.GPS_PROVIDER)
+                    providerGps?.let {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            LOCATION_REFRESH_PERIOD,
+                            LOCATION_DISTANCE,
+                            locationListener
+                        )
                     }
-                    locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        LOCATION_REFRESH_PERIOD,
-                        LOCATION_DISTANCE,
-                        locationListener
-                    )
+                } else {
+                    val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    if (location == null) {
+                        view?.snackMessage("Location cannot be detected")
+                    } else {
+                        initView(location)
+                        view?.snackMessage("No signal to detect location")
+                    }
                 }
+            } else {
+                explanationDialog(true)
             }
         }
+    }
+
+    private fun initView(location: Location) {
+        val latitude = "Lat: " + "%.5f".format(location.latitude)
+        val longitude = "Lon: " + "%.5f".format(location.longitude)
+
+        getAddress(requireContext(), location)
+
+        with (ui) {
+            textFieldLatitude.text = latitude
+            textFieldLongitude.text = longitude
+        }
+    }
+
+    private fun getAddress(context: Context, location: Location) {
+        val geocoder = Geocoder(context)
+        Thread {
+            @Suppress("deprecation")
+            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+            requireActivity().runOnUiThread {
+                ui.textFieldLocation.text = addresses?.get(0)?.getAddressLine(0)
+            }
+        }.start()
     }
 
     @Deprecated("Deprecated in Java")
