@@ -135,13 +135,17 @@ class GpsWeatherFragment : Fragment() {
 
     private fun getAddress(context: Context, location: Location) {
         val geocoder = Geocoder(context)
-        Thread {
-            @Suppress("deprecation")
-            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-            requireActivity().runOnUiThread {
-                ui.textFieldLocation.text = addresses?.get(0)?.getAddressLine(0)
-            }
-        }.start()
+        try {
+            Thread {
+                @Suppress("deprecation")
+                val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                requireActivity().runOnUiThread {
+                    ui.textFieldLocation.text = addresses?.get(0)?.getAddressLine(0)
+                }
+            }.start()
+        } catch (e: Exception) {
+            view?.snackMessage("Cannot acquire address")
+        }
     }
 
     @Deprecated("Deprecated in Java")
