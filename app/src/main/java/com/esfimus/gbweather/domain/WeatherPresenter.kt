@@ -1,11 +1,11 @@
 package com.esfimus.gbweather.domain
 
-import com.esfimus.gbweather.domain.api.WeatherLoaded
+import com.esfimus.gbweather.data.api.WeatherLoaded
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 data class WeatherPresenter(
-    val location: Location,
+    val customLocation: CustomLocation,
     val weatherLoaded: WeatherLoaded? = null
     ) {
     val currentTimeFormatted = currentDateAndTime()

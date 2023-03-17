@@ -19,11 +19,12 @@ import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
-import com.esfimus.gbweather.domain.Location
+import com.esfimus.gbweather.domain.CustomLocation
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.broadcast.BroadcastService
-import com.esfimus.gbweather.ui.contentprovider.ContactsFragment
+import com.esfimus.gbweather.ui.content_provider.ContactsFragment
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
+import com.esfimus.gbweather.ui.gps_map_location.GpsWeatherFragment
 import com.google.android.material.snackbar.Snackbar
 
 class WeatherDetailsFragment : Fragment() {
@@ -71,26 +72,29 @@ class WeatherDetailsFragment : Fragment() {
                 currentWeatherIcon.loadSvg(w.iconLink)
             }
         }
-        ui.updateWeather.setOnClickListener {
+        ui.updateWeatherFab.setOnClickListener {
             refreshWeather()
         }
-        ui.locationList.setOnClickListener {
+        ui.favoriteLocationsListFab.setOnClickListener {
             openFragment(FavoriteWeatherListFragment.newInstance())
         }
-        ui.getContactsContentProvider.setOnClickListener {
+        ui.getContactsContentProviderFab.setOnClickListener {
             openFragment(ContactsFragment.newInstance())
+        }
+        ui.getGpsWeatherFab.setOnClickListener {
+            openFragment(GpsWeatherFragment.newInstance())
         }
     }
 
     private fun startBroadcastService() {
-        var location: Location? = null
+        var customLocation: CustomLocation? = null
         model.selectedWeatherLive.observe(viewLifecycleOwner) {
-            location = model.getLocation(it.locationName)
+            customLocation = model.getLocation(it.locationName)
         }
-        ui.updateWeatherBroadcast.setOnClickListener {
+        ui.updateWeatherBroadcastFab.setOnClickListener {
             context?.let {
                 it.startService(Intent(it, BroadcastService::class.java).apply {
-                    putExtra(WEATHER_LOCATION_EXTRA, location)
+                    putExtra(WEATHER_LOCATION_EXTRA, customLocation)
                 })
             }
         }

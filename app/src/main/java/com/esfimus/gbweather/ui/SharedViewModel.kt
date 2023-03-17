@@ -6,10 +6,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.esfimus.gbweather.data.AvailableLocations
+import com.esfimus.gbweather.data.api.*
 import com.esfimus.gbweather.data.room.WeatherEntity
-import com.esfimus.gbweather.domain.Location
+import com.esfimus.gbweather.domain.CustomLocation
 import com.esfimus.gbweather.domain.WeatherPresenter
-import com.esfimus.gbweather.domain.api.*
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -33,7 +33,7 @@ class SharedViewModel : ViewModel() {
     private val availableLocationsData = AvailableLocations()
     private var selectedWeatherIndex = 0
     var numberOfItems = 0
-    private val emptyLocation = Location("", 0.0, 0.0)
+    private val emptyLocation = CustomLocation("", 0.0, 0.0)
 
     // saving parameters
     private var saveWeather: SharedPreferences? = null
@@ -108,11 +108,11 @@ class SharedViewModel : ViewModel() {
      * Uploading data from weather API using Retrofit
      */
     fun loadWeatherRetrofit(requestLocation: String) {
-        val location = availableLocationsData.getLocation(requestLocation) ?: Location("", 0.0, 0.0)
+        val customLocation = availableLocationsData.getLocation(requestLocation) ?: emptyLocation
         val callBack = object : Callback<WeatherLoaded> {
             override fun onResponse(call: Call<WeatherLoaded>, response: Response<WeatherLoaded>) {
                 val weatherLoaded: WeatherLoaded? = response.body()
-                val weatherPresenter = WeatherPresenter(location, weatherLoaded)
+                val weatherPresenter = WeatherPresenter(customLocation, weatherLoaded)
                 setCurrentWeather(weatherObjectConverter(weatherPresenter))
                 when (response.code()) {
                     in 300 until 400 -> responseFailureLive.value = "Redirection"
@@ -125,7 +125,7 @@ class SharedViewModel : ViewModel() {
             }
         }
         val loadRetrofitWeather = LoadRetrofitWeather()
-        loadRetrofitWeather.getWeather(location.lat, location.lon, callBack)
+        loadRetrofitWeather.getWeather(customLocation.lat, customLocation.lon, callBack)
     }
 
     /**
@@ -133,9 +133,9 @@ class SharedViewModel : ViewModel() {
      */
     private fun weatherObjectConverter(weatherPresenter: WeatherPresenter): WeatherEntity {
         return WeatherEntity(
-            weatherPresenter.location.name,
-            weatherPresenter.location.lat.toString(),
-            weatherPresenter.location.lon.toString(),
+            weatherPresenter.customLocation.name,
+            weatherPresenter.customLocation.lat.toString(),
+            weatherPresenter.customLocation.lon.toString(),
             weatherPresenter.currentTimeFormatted,
             weatherPresenter.temperatureFormatted,
             weatherPresenter.feelsLikeFormatted,
@@ -182,7 +182,7 @@ class SharedViewModel : ViewModel() {
     /**
      * Returns location by name if it is available
      */
-    fun getLocation(requestLocation: String): Location {
+    fun getLocation(requestLocation: String): CustomLocation {
         return availableLocationsData.getLocation(requestLocation) ?: emptyLocation
     }
 }

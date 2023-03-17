@@ -1,10 +1,10 @@
-package com.esfimus.gbweather.domain.api
+package com.esfimus.gbweather.data.api
 
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.esfimus.gbweather.BuildConfig
-import com.esfimus.gbweather.domain.Location
+import com.esfimus.gbweather.domain.CustomLocation
 import com.esfimus.gbweather.domain.WeatherPresenter
 import com.google.gson.Gson
 import java.io.BufferedReader
@@ -12,11 +12,11 @@ import java.io.InputStreamReader
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-class LoadWeather(private val location: Location, private val loadable: Loadable) {
+class LoadWeather(private val customLocation: CustomLocation, private val loadable: Loadable) {
 
     fun loadWeather() {
         try {
-            val uri = URL("https://api.weather.yandex.ru/v2/informers?lat=${location.lat}&lon=${location.lon}")
+            val uri = URL("https://api.weather.yandex.ru/v2/informers?lat=${customLocation.lat}&lon=${customLocation.lon}")
             val handler = Handler(Looper.getMainLooper())
             Thread {
                 lateinit var urlConnection: HttpsURLConnection
@@ -29,7 +29,7 @@ class LoadWeather(private val location: Location, private val loadable: Loadable
                     }
                     val buffer = BufferedReader(InputStreamReader(urlConnection.inputStream))
                     val weatherLoaded: WeatherLoaded = Gson().fromJson(buffer, WeatherLoaded::class.java)
-                    val weather = WeatherPresenter(location, weatherLoaded)
+                    val weather = WeatherPresenter(customLocation, weatherLoaded)
                     handler.post { loadable.loaded(weather) }
                 } catch (e: Exception) {
                     Log.e("@@@", "Connection failed ${urlConnection.responseCode}", e)

@@ -8,29 +8,29 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.esfimus.gbweather.data.WEATHER_BROADCAST_EXTRA
 import com.esfimus.gbweather.data.WEATHER_BROADCAST_INTENT
 import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
-import com.esfimus.gbweather.domain.Location
+import com.esfimus.gbweather.domain.CustomLocation
 import com.esfimus.gbweather.domain.WeatherPresenter
-import com.esfimus.gbweather.domain.api.LoadWeather
-import com.esfimus.gbweather.domain.api.Loadable
+import com.esfimus.gbweather.data.api.LoadWeather
+import com.esfimus.gbweather.data.api.Loadable
 
 class BroadcastService : Service() {
 
     @Suppress("DEPRECATION")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val location: Location? = if (VERSION.SDK_INT >= 33) {
-            intent?.getParcelableExtra(WEATHER_LOCATION_EXTRA, Location::class.java)
+        val customLocation: CustomLocation? = if (VERSION.SDK_INT >= 33) {
+            intent?.getParcelableExtra(WEATHER_LOCATION_EXTRA, CustomLocation::class.java)
         } else {
             intent?.getParcelableExtra(WEATHER_LOCATION_EXTRA)
         }
-        updateWeather(location ?: Location("North Pole", 90.0, 0.0))
+        updateWeather(customLocation ?: CustomLocation("North Pole", 90.0, 0.0))
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun updateWeather(location: Location) {
+    private fun updateWeather(customLocation: CustomLocation) {
         val loadableWeather: Loadable = object : Loadable {
             override fun loaded(weather: WeatherPresenter) {
                 sendBroadcast("""
-                    ${weather.location.name}
+                    ${weather.customLocation.name}
                     ${weather.currentTimeFormatted}
                 """.trimIndent())
             }
@@ -42,7 +42,7 @@ class BroadcastService : Service() {
                 }
             }
         }
-        val loader = LoadWeather(location, loadableWeather)
+        val loader = LoadWeather(customLocation, loadableWeather)
         loader.loadWeather()
     }
 
