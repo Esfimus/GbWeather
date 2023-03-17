@@ -108,7 +108,7 @@ class SharedViewModel : ViewModel() {
      * Uploading data from weather API using Retrofit
      */
     fun loadWeatherRetrofit(requestLocation: String) {
-        val customLocation = availableLocationsData.getLocation(requestLocation) ?: CustomLocation("", 0.0, 0.0)
+        val customLocation = availableLocationsData.getLocation(requestLocation) ?: emptyLocation
         val callBack = object : Callback<WeatherLoaded> {
             override fun onResponse(call: Call<WeatherLoaded>, response: Response<WeatherLoaded>) {
                 val weatherLoaded: WeatherLoaded? = response.body()

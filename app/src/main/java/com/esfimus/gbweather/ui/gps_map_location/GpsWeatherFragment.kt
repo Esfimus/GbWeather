@@ -12,8 +12,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.databinding.FragmentGpsWeatherBinding
 import com.google.android.material.snackbar.Snackbar
@@ -26,6 +31,8 @@ class GpsWeatherFragment : Fragment() {
 
     private var _ui: FragmentGpsWeatherBinding? = null
     private val ui get() = _ui!!
+    private val gpsModel: GpsWeatherViewModel by lazy {
+        ViewModelProvider(requireActivity())[GpsWeatherViewModel::class.java] }
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
             initView(location)
@@ -104,10 +111,25 @@ class GpsWeatherFragment : Fragment() {
         val longitude = "Lon: " + "%.5f".format(location.longitude)
 
         getAddress(requireContext(), location)
+        gpsModel.loadWeatherRetrofit(location)
 
         with (ui) {
             textFieldLatitude.text = latitude
             textFieldLongitude.text = longitude
+        }
+        gpsModel.weatherLive.observe(viewLifecycleOwner) {
+            with (ui) {
+                textFieldTemperature.text = it.temperatureFormatted
+                textFieldFeelsLike.text = it.feelsLikeFormatted
+                textFieldHumidity.text = it.humidityFormatted
+                textFieldWind.text = it.windFormatted
+                textFieldPressure.text = it.pressureFormatted
+                currentTime.text = it.currentTimeFormatted
+                currentWeatherIcon.loadSvg(it.iconLink)
+            }
+        }
+        gpsModel.responseFailureLive.observe(viewLifecycleOwner) {
+            view?.snackMessage(it)
         }
     }
 
@@ -179,6 +201,19 @@ class GpsWeatherFragment : Fragment() {
     private fun mRequestPermission() {
         @Suppress("deprecation")
         requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
+    }
+
+    private fun ImageView.loadSvg(url: String) {
+        val imageLoader = ImageLoader.Builder(this.context)
+            .components { add(SvgDecoder.Factory()) }
+            .build()
+        val request = ImageRequest.Builder(this.context)
+            .crossfade(true)
+            .crossfade(500)
+            .data(url)
+            .target(this)
+            .build()
+        imageLoader.enqueue(request)
     }
 
     private fun View.snackMessage(text: String, length: Int = Snackbar.LENGTH_SHORT) {
