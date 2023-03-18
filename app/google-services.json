@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "86102757681",
+    "project_id": "gbweather-73511",
+    "storage_bucket": "gbweather-73511.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86102757681:android:8f7b1e33d4e284a6116010",
+        "android_client_info": {
+          "package_name": "com.esfimus.gbweather"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86102757681-loqsddnfo03ck1olisrihhl8s337al0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzy7DDCP8jZm8vUmKmcU6A9ZjzUXhXz-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86102757681-loqsddnfo03ck1olisrihhl8s337al0q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
