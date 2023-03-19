@@ -9,6 +9,7 @@ import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.WEATHER_BROADCAST_INTENT
 import com.esfimus.gbweather.databinding.ActivityMainBinding
 import com.esfimus.gbweather.ui.broadcast.MyReceiver
+import com.esfimus.gbweather.ui.firebase.FIREBASE
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 
@@ -45,11 +46,11 @@ class MainActivity : AppCompatActivity() {
     private fun getFirebaseToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.w("FirebaseToken", "Fetching FCM registration token failed", task.exception)
+                Log.w(FIREBASE, "Fetching FCM registration token failed", task.exception)
                 return@OnCompleteListener
             }
             val token = task.result
-            Log.d("FirebaseToken", "Firebase token: $token")
+            Log.d(FIREBASE, "Firebase token: $token")
         })
     }
 }
