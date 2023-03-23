@@ -29,6 +29,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        beta {
+            initWith debug
+        }
     }
 
     buildTypes.each {
@@ -45,6 +48,22 @@ android {
 
     kotlinOptions {
         jvmTarget = '11'
+    }
+
+    flavorDimensions 'WeatherVersion'
+    productFlavors {
+        Gps {
+            dimension 'WeatherVersion'
+            versionNameSuffix '.gps'
+        }
+        OnlyLocationList {
+            dimension 'WeatherVersion'
+            versionNameSuffix '.locations'
+        }
+        Full {
+            dimension 'WeatherVersion'
+            versionNameSuffix '.full'
+        }
     }
 }
 
