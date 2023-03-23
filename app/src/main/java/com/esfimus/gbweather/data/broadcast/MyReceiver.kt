@@ -1,10 +1,9 @@
-package com.esfimus.gbweather.ui.broadcast
+package com.esfimus.gbweather.data.broadcast
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import com.esfimus.gbweather.data.WEATHER_BROADCAST_EXTRA
 
 class MyReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

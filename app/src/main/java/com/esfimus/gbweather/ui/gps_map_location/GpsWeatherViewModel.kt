@@ -7,24 +7,24 @@ import androidx.lifecycle.ViewModel
 import com.esfimus.gbweather.data.api.LoadRetrofitWeather
 import com.esfimus.gbweather.data.api.WeatherLoaded
 import com.esfimus.gbweather.domain.CustomLocation
-import com.esfimus.gbweather.domain.WeatherPresenter
+import com.esfimus.gbweather.domain.WeatherFormatted
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class GpsWeatherViewModel : ViewModel() {
 
-    val weatherLive: MutableLiveData<WeatherPresenter> = MutableLiveData()
+    val weatherLive: MutableLiveData<WeatherFormatted> = MutableLiveData()
     val responseFailureLive: MutableLiveData<String> = MutableLiveData()
 
     fun loadWeatherRetrofit(location: Location) {
         val callBack = object : Callback<WeatherLoaded> {
             override fun onResponse(call: Call<WeatherLoaded>, response: Response<WeatherLoaded>) {
                 val weatherLoaded: WeatherLoaded? = response.body()
-                val weatherPresenter = WeatherPresenter(
+                val weatherFormatted = WeatherFormatted(
                     CustomLocation("", location.latitude, location.longitude),
                     weatherLoaded)
-                weatherLive.value = weatherPresenter
+                weatherLive.value = weatherFormatted
                 when (response.code()) {
                     in 300 until 400 -> responseFailureLive.value = "Redirection"
                     in 400 until 500 -> responseFailureLive.value = "Client Error"

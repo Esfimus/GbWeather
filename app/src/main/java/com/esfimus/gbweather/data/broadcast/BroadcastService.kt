@@ -1,17 +1,18 @@
-package com.esfimus.gbweather.ui.broadcast
+package com.esfimus.gbweather.data.broadcast
 
 import android.app.Service
 import android.content.Intent
 import android.os.Build.VERSION
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.esfimus.gbweather.data.WEATHER_BROADCAST_EXTRA
-import com.esfimus.gbweather.data.WEATHER_BROADCAST_INTENT
-import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
-import com.esfimus.gbweather.domain.CustomLocation
-import com.esfimus.gbweather.domain.WeatherPresenter
 import com.esfimus.gbweather.data.api.LoadWeather
 import com.esfimus.gbweather.data.api.Loadable
+import com.esfimus.gbweather.domain.CustomLocation
+import com.esfimus.gbweather.domain.WeatherFormatted
+
+const val WEATHER_BROADCAST_INTENT = "ru.gb.esfimus.weather.updated"
+const val WEATHER_BROADCAST_EXTRA = "loaded weather"
+const val WEATHER_LOCATION_EXTRA = "selected weather location"
 
 class BroadcastService : Service() {
 
@@ -28,7 +29,7 @@ class BroadcastService : Service() {
 
     private fun updateWeather(customLocation: CustomLocation) {
         val loadableWeather: Loadable = object : Loadable {
-            override fun loaded(weather: WeatherPresenter) {
+            override fun loaded(weather: WeatherFormatted) {
                 sendBroadcast("""
                     ${weather.customLocation.name}
                     ${weather.currentTimeFormatted}

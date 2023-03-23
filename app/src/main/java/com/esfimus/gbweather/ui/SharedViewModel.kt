@@ -9,7 +9,7 @@ import com.esfimus.gbweather.data.AvailableLocations
 import com.esfimus.gbweather.data.api.*
 import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.domain.CustomLocation
-import com.esfimus.gbweather.domain.WeatherPresenter
+import com.esfimus.gbweather.domain.WeatherFormatted
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -91,7 +91,7 @@ class SharedViewModel : ViewModel() {
      */
     fun loadWeatherImitation(requestLocation: String) {
         val location = availableLocationsData.getLocation(requestLocation) ?: emptyLocation
-        val weatherPresenter = WeatherPresenter(location, WeatherLoaded(
+        val weatherFormatted = WeatherFormatted(location, WeatherLoaded(
             WeatherFact("condition", "daytime", Random.nextInt(-30,30),
                 Random.nextInt(10,100), "icon", Random.nextInt(0, 10),
                 true, Random.nextInt(735,745), Random.nextInt(100,200),
@@ -101,7 +101,7 @@ class SharedViewModel : ViewModel() {
             0,
             "nowDt")
         )
-        setCurrentWeather(weatherObjectConverter(weatherPresenter))
+        setCurrentWeather(weatherObjectConverter(weatherFormatted))
     }
 
     /**
@@ -112,8 +112,8 @@ class SharedViewModel : ViewModel() {
         val callBack = object : Callback<WeatherLoaded> {
             override fun onResponse(call: Call<WeatherLoaded>, response: Response<WeatherLoaded>) {
                 val weatherLoaded: WeatherLoaded? = response.body()
-                val weatherPresenter = WeatherPresenter(customLocation, weatherLoaded)
-                setCurrentWeather(weatherObjectConverter(weatherPresenter))
+                val weatherFormatted = WeatherFormatted(customLocation, weatherLoaded)
+                setCurrentWeather(weatherObjectConverter(weatherFormatted))
                 when (response.code()) {
                     in 300 until 400 -> responseFailureLive.value = "Redirection"
                     in 400 until 500 -> responseFailureLive.value = "Client Error"
@@ -131,18 +131,18 @@ class SharedViewModel : ViewModel() {
     /**
      * Converts loaded weather object for storage in database
      */
-    private fun weatherObjectConverter(weatherPresenter: WeatherPresenter): WeatherEntity {
+    private fun weatherObjectConverter(weatherFormatted: WeatherFormatted): WeatherEntity {
         return WeatherEntity(
-            weatherPresenter.customLocation.name,
-            weatherPresenter.customLocation.lat.toString(),
-            weatherPresenter.customLocation.lon.toString(),
-            weatherPresenter.currentTimeFormatted,
-            weatherPresenter.temperatureFormatted,
-            weatherPresenter.feelsLikeFormatted,
-            weatherPresenter.humidityFormatted,
-            weatherPresenter.windFormatted,
-            weatherPresenter.pressureFormatted,
-            weatherPresenter.iconLink
+            weatherFormatted.customLocation.name,
+            weatherFormatted.customLocation.lat.toString(),
+            weatherFormatted.customLocation.lon.toString(),
+            weatherFormatted.currentTimeFormatted,
+            weatherFormatted.temperatureFormatted,
+            weatherFormatted.feelsLikeFormatted,
+            weatherFormatted.humidityFormatted,
+            weatherFormatted.windFormatted,
+            weatherFormatted.pressureFormatted,
+            weatherFormatted.iconLink
         )
     }
 

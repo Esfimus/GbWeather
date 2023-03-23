@@ -14,18 +14,19 @@ import coil.decode.SvgDecoder
 import coil.load
 import coil.request.ImageRequest
 import com.esfimus.gbweather.R
-import com.esfimus.gbweather.data.WEATHER_LOCATION_EXTRA
 import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.data.room.WeatherViewModel
-import com.esfimus.gbweather.data.weather_icon_link
 import com.esfimus.gbweather.databinding.FragmentWeatherDetailsBinding
 import com.esfimus.gbweather.domain.CustomLocation
 import com.esfimus.gbweather.ui.SharedViewModel
-import com.esfimus.gbweather.ui.broadcast.BroadcastService
+import com.esfimus.gbweather.data.broadcast.BroadcastService
+import com.esfimus.gbweather.data.broadcast.WEATHER_LOCATION_EXTRA
 import com.esfimus.gbweather.ui.content_provider.ContactsFragment
 import com.esfimus.gbweather.ui.favorite.FavoriteWeatherListFragment
 import com.esfimus.gbweather.ui.gps_map_location.GpsWeatherFragment
 import com.google.android.material.snackbar.Snackbar
+
+const val weather_icon_link = "https://cdn-icons-png.flaticon.com/512/1231/1231983.png?w=740&t=st=1678038447~exp=1678039047~hmac=a139563c6f772c7c2d7099fa7f027ffd7c68a46dcffad2dd955920c794bee33b"
 
 class WeatherDetailsFragment : Fragment() {
 

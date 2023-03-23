@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.esfimus.gbweather.R
 import com.esfimus.gbweather.data.room.WeatherEntity
 import com.esfimus.gbweather.databinding.RecyclerviewItemBinding
-import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
-import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
 
 class RecyclerAdapter(private val itemsList: List<WeatherEntity>) :
     RecyclerView.Adapter<RecyclerAdapter.CustomViewHolder>() {
@@ -59,4 +57,12 @@ class RecyclerAdapter(private val itemsList: List<WeatherEntity>) :
         itemLongClickListener = longClickListener
     }
 
+}
+
+interface OnListItemCLick {
+    fun onClick(position: Int)
+}
+
+interface OnListItemLongClick {
+    fun onLongCLick(position: Int, itemView: View)
 }

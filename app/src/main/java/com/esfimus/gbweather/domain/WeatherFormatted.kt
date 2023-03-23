@@ -4,7 +4,7 @@ import com.esfimus.gbweather.data.api.WeatherLoaded
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class WeatherPresenter(
+data class WeatherFormatted(
     val customLocation: CustomLocation,
     val weatherLoaded: WeatherLoaded? = null
     ) {

@@ -15,8 +15,6 @@ import com.esfimus.gbweather.data.room.WeatherViewModel
 import com.esfimus.gbweather.databinding.FragmentFavoriteWeatherListBinding
 import com.esfimus.gbweather.ui.SharedViewModel
 import com.esfimus.gbweather.ui.add.AddWeatherLocationFragment
-import com.esfimus.gbweather.ui.favorite.clicks.OnListItemCLick
-import com.esfimus.gbweather.ui.favorite.clicks.OnListItemLongClick
 
 class FavoriteWeatherListFragment : Fragment() {
 

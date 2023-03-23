@@ -6,10 +6,10 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.esfimus.gbweather.R
-import com.esfimus.gbweather.data.WEATHER_BROADCAST_INTENT
+import com.esfimus.gbweather.data.broadcast.MyReceiver
+import com.esfimus.gbweather.data.broadcast.WEATHER_BROADCAST_INTENT
+import com.esfimus.gbweather.data.firebase.FIREBASE
 import com.esfimus.gbweather.databinding.ActivityMainBinding
-import com.esfimus.gbweather.ui.broadcast.MyReceiver
-import com.esfimus.gbweather.ui.firebase.FIREBASE
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 

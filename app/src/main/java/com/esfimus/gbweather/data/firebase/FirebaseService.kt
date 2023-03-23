@@ -1,4 +1,4 @@
-package com.esfimus.gbweather.ui.firebase
+package com.esfimus.gbweather.data.firebase
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
