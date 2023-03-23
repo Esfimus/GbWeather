@@ -28,9 +28,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "TYPE", '"RELEASE"'
+        }
+        debug {
+            versionNameSuffix "-debug"
+            buildConfigField "String", "TYPE", '"DEBUG"'
         }
         beta {
             initWith debug
+            versionNameSuffix "-beta"
+            buildConfigField "String", "TYPE", '"BETA"'
         }
     }
 
@@ -50,18 +57,18 @@ android {
         jvmTarget = '11'
     }
 
-    flavorDimensions 'WeatherVersion'
+    flavorDimensions 'content'
     productFlavors {
-        Gps {
-            dimension 'WeatherVersion'
+        gps {
+            dimension 'content'
             versionNameSuffix '.gps'
         }
-        OnlyLocationList {
-            dimension 'WeatherVersion'
+        locations {
+            dimension 'content'
             versionNameSuffix '.locations'
         }
-        Full {
-            dimension 'WeatherVersion'
+        full {
+            dimension 'content'
             versionNameSuffix '.full'
         }
     }
