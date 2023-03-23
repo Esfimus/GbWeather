@@ -28,6 +28,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "TYPE", '"RELEASE"'
+        }
+        debug {
+            versionNameSuffix "-debug"
+            buildConfigField "String", "TYPE", '"DEBUG"'
+        }
+        beta {
+            initWith debug
+            versionNameSuffix "-beta"
+            buildConfigField "String", "TYPE", '"BETA"'
         }
     }
 
@@ -45,6 +55,22 @@ android {
 
     kotlinOptions {
         jvmTarget = '11'
+    }
+
+    flavorDimensions 'content'
+    productFlavors {
+        gps {
+            dimension 'content'
+            versionNameSuffix '.gps'
+        }
+        locations {
+            dimension 'content'
+            versionNameSuffix '.locations'
+        }
+        full {
+            dimension 'content'
+            versionNameSuffix '.full'
+        }
     }
 }
 

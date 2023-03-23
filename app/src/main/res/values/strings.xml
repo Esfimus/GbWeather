@@ -3,7 +3,6 @@
     <string name="location">Location</string>
     <string name="temperature">Temperature</string>
     <string name="humidity">Humidity</string>
-    <string name="check">Check</string>
     <string name="enter_location">Enter location</string>
     <string name="feels_like">Feels like</string>
     <string name="wind">Wind</string>
