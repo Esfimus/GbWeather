@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.gps_map_location.GpsWeatherFragment">
 
+    <ProgressBar
+        android:id="@+id/loading_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/large_margin"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text_field_location"
         android:layout_width="wrap_content"

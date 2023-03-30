@@ -59,6 +59,7 @@ class WeatherDetailsFragment : Fragment() {
         val weatherIcon: ImageView = ui.weatherIcon
         weatherIcon.load(weather_icon_link)
         model.selectedWeatherLive.observe(viewLifecycleOwner) { w ->
+            ui.loadingProgressBar.visibility = View.GONE
             currentWeather = w
             with (ui) {
                 textFieldLocation.text = w.locationName
@@ -72,6 +73,9 @@ class WeatherDetailsFragment : Fragment() {
                 currentTime.text = w.currentTime
                 currentWeatherIcon.loadSvg(w.iconLink)
             }
+        }
+        model.responseFailureLive.observe(viewLifecycleOwner) {
+            view?.snackMessage(it.toString())
         }
         ui.updateWeatherFab.setOnClickListener {
             refreshWeather()
@@ -117,6 +121,7 @@ class WeatherDetailsFragment : Fragment() {
     private fun refreshWeather() {
         try {
             if (currentWeather.locationName.isNotEmpty()) {
+                ui.loadingProgressBar.visibility = View.VISIBLE
                 model.loadWeatherRetrofit(currentWeather.locationName)
                 weatherViewModel.updateWeather(currentWeather)
             } else {

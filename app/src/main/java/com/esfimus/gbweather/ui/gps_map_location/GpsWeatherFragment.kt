@@ -110,6 +110,7 @@ class GpsWeatherFragment : Fragment() {
         val latitude = "Lat: " + "%.5f".format(location.latitude)
         val longitude = "Lon: " + "%.5f".format(location.longitude)
 
+        ui.loadingProgressBar.visibility = View.VISIBLE
         getAddress(requireContext(), location)
         gpsModel.loadWeatherRetrofit(location)
 
@@ -118,6 +119,7 @@ class GpsWeatherFragment : Fragment() {
             textFieldLongitude.text = longitude
         }
         gpsModel.weatherLive.observe(viewLifecycleOwner) {
+            ui.loadingProgressBar.visibility = View.GONE
             with (ui) {
                 textFieldTemperature.text = it.temperatureFormatted
                 textFieldFeelsLike.text = it.feelsLikeFormatted
